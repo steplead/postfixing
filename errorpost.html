@@ -1,0 +1,792 @@
+<!-- =======================================================
+H1 / Slug
+======================================================= -->
+
+<h1>Nozzle Clogging &amp; Startup Failures: Preventive Playbook</h1>
+<!-- permalink: /cij-nozzle-clogging-prevent/ -->
+
+
+<!-- =======================================================
+Intro — why this playbook matters (expanded ×3)
+======================================================= -->
+
+<p><strong>nozzle clogging and startup failures</strong> are not random, and they are rarely “operator luck.” They
+    emerge when fluid stability, environmental control, operational discipline, and component life fall out of
+    alignment. This cluster page turns first-principles into an on-the-floor operating system: orange data cards you can
+    paste into SOPs, checkable acceptance criteria, calculators and estimators, troubleshooting matrices, and a
+    preventive cadence that your teams can run every shift, week, and quarter.</p>
+
+<p style="background:#fff7ea;padding:1rem 1.1rem;border-radius:.6rem;margin:1rem 0;"><strong>Definition (NCSF):</strong>
+    <em>nozzle clogging and startup failures</em> = any CIJ/TIJ condition that blocks “Ready-to-Print in spec” within
+    the target initialization time or yields sustained defects linked to orifice obstruction, pigment agglomeration,
+    charge/deflection errors, cap discipline violations, or dust/static ingress. <strong>Targets:</strong> CIJ ready ≤
+    <strong>180 s</strong>; TIJ ready ≤ <strong>30 s</strong>; test pattern must pass <em>before</em> going online.</p>
+
+<ul>
+    <li><strong>Who uses this:</strong> line leaders, maintenance technicians, QE, and EHS—any role accountable for code
+        legibility and OEE.</li>
+    <li><strong>What you gain:</strong> a physics-first map of failure, fluid/compatibility guardrails, humidity/static
+        playbooks, “clean stop” rituals, and leading KPIs that predict issues <em>before</em> they become <strong>nozzle
+            clogging and startup failures</strong>.</li>
+</ul>
+
+<p>For the system-level consumables view (inks, make-up, cleaners, ribbons, labels) and how coding decisions cascade,
+    see the pillar <a href="/coding-marking-consumables/" aria-label="Coding & Marking Consumables pillar">Coding &amp;
+        Marking Consumables (CIJ/TIJ/TTO/Laser)</a>.</p>
+
+
+<!-- =======================================================
+H2 — Failure anatomy for nozzle clogging and startup failures (expanded ×3+)
+======================================================= -->
+
+<h2 id="failure-anatomy">Failure anatomy for <em>nozzle clogging and startup failures</em></h2>
+
+<p>CIJ relies on a continuous jet that breaks into droplets, is <em>charged</em> at an electrode, <em>deflected</em> in
+    a high-voltage field, marks the substrate, then lands in the gutter for recirculation. TIJ integrates microheaters
+    inside a disposable cartridge; “the cartridge <em>is</em> the printhead.” In both technologies, a handful of
+    physical balances—viscosity (μ), surface tension (σ), temperature (T), conductivity (κ), electric fields (E), air
+    quality, and alignment—decide whether you hit “Ready” or spiral into <strong>nozzle clogging and startup
+        failures</strong>.</p>
+
+<h3 id="failure-physics">H3 — Physics levers behind <em>nozzle clogging and startup failures</em></h3>
+<p style="background:#fff7ea;padding:1rem;border-radius:.6rem;margin:1rem 0;"><strong>Jet physics cards:</strong> Weber
+    number <code>We = ρu²d/σ</code> governs breakup; Capillary number <code>Ca = μu/σ</code> links viscosity to
+    satellite risk; Reynolds number <code>Re = ρud/μ</code> informs laminar breakup; charging uniformity hinges on κ and
+    clean geometry. Drift in any dimension pushes systems toward <em>nozzle clogging and startup failures</em>.</p>
+
+<h3 id="four-forces">H3 — The four forces that seed <em>nozzle clogging and startup failures</em></h3>
+<ol>
+    <li><strong>Fluid drift:</strong> μ & κ shift with temperature and make-up adds; wrong cleaners over-dilute;
+        pigmented whites settle; agglomerates scar filters and orifices.</li>
+    <li><strong>Environment:</strong> low RH dries the tip and amplifies static; dust rides the gutter gradient; heat
+        thins ink (μ↓); cold thickens (μ↑).</li>
+    <li><strong>Operational shortcuts:</strong> skipping auto-flush, dry wiping, leaving TIJ uncapped, hard power-offs,
+        long idle periods.</li>
+    <li><strong>Component wear:</strong> filters load (pump % creeps), seals breathe air, charge plates foul, legacy
+        firmware stretches inits—each can precipitate <strong>nozzle clogging and startup failures</strong>.</li>
+</ol>
+
+<h4 id="symptom-map">H4 — Symptom→cause map for <em>nozzle clogging and startup failures</em></h4>
+<table style="width:100%;border-collapse:collapse;margin:1rem 0;">
+    <caption><strong>Failure map aligned to <em>nozzle clogging and startup failures</em></strong></caption>
+    <thead>
+        <tr>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Subsystem</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Primary drift</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Line symptom</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Immediate check</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Preventive lever</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="background:#fff7ea;">
+            <td>Fluid (μ, κ)</td>
+            <td>Temp swing; over-dilution</td>
+            <td>Satellites; gutter splash</td>
+            <td>Is μ believable?</td>
+            <td>Seasonal μ plan; make-up budget</td>
+        </tr>
+        <tr>
+            <td>Head plate</td>
+            <td>Dried film; dust</td>
+            <td>Weak jet; contact marks</td>
+            <td>10× loupe inspection</td>
+            <td>Lint-free wet wipe; positive air</td>
+        </tr>
+        <tr style="background:#fff7ea;">
+            <td>Charge/deflect</td>
+            <td>Fouled geometry; static</td>
+            <td>Random deflection</td>
+            <td>Gutter centering</td>
+            <td>Grounding + ionizers; RH 40–60%</td>
+        </tr>
+        <tr>
+            <td>Controls/FW</td>
+            <td>Legacy firmware</td>
+            <td>Slow ready; retries</td>
+            <td>Version audit</td>
+            <td>Quarterly updates</td>
+        </tr>
+    </tbody>
+</table>
+
+
+<!-- =======================================================
+H2 — Fluids: viscosity & compatibility to curb nozzle clogging and startup failures
+======================================================= -->
+
+<h2 id="fluids">Fluids: viscosity &amp; compatibility to curb <em>nozzle clogging and startup failures</em></h2>
+
+<h3 id="viscosity-window">H3 — Viscosity window for <em>nozzle clogging and startup failures</em> prevention</h3>
+<p>CIJ inks operate in a tight μ window. Temperature dominates μ: warmer → thinner (satellites); colder → thicker (pump
+    strain, unstable breakup). Controllers meter make-up to pull μ on target, but manual flooding or wrong cleaning
+    over-dilutes reservoirs and triggers days of drift—classic precursors to <strong>nozzle clogging and startup
+        failures</strong>.</p>
+
+<p style="background:#fff7ea;padding:1rem;border-radius:.6rem;margin:1rem 0;"><strong>Indicative scaling
+        (planning):</strong> <code>μ(T) ≈ μ<sub>20 °C</sub>·e<sup>−β(T−20)</sup></code>, β≈0.03–0.05 °C⁻¹ for many
+    solvent systems. A +10 °C room rise can drop μ by ~26–39%. Pair seasonal μ plans with make-up budgets to suppress
+    <em>nozzle clogging and startup failures</em>.</p>
+
+<h4 id="mu-table">H4 — Control window &amp; acceptance for <em>nozzle clogging and startup failures</em></h4>
+<table style="width:100%;border-collapse:collapse;margin:.75rem 0;">
+    <thead>
+        <tr>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Parameter</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Target</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">If below/above</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Mitigation</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="background:#fff7ea;">
+            <td>μ (controller)</td>
+            <td>OEM nominal ± small %</td>
+            <td>Low → satellites; High → jet strain</td>
+            <td>Adjust make-up; stabilize T</td>
+        </tr>
+        <tr>
+            <td>Temperature</td>
+            <td>18–28 °C</td>
+            <td>Cold → μ↑; Hot → μ↓</td>
+            <td>HVAC, shields, door control</td>
+        </tr>
+        <tr style="background:#fff7ea;">
+            <td>Conductivity κ</td>
+            <td>OEM range</td>
+            <td>Out-of-range charge instability</td>
+            <td>Validate fluids; avoid mixing</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 id="makeup-planning">H3 — Make-up planning that you can defend (avoid <em>nozzle clogging and startup failures</em>)
+</h3>
+
+<!--ITB-START-->
+<!-- wp:html -->
+<pre><code class="itb-tool">
+{
+  "id": "itb-makeup-planner-v4",
+  "type": "calculator",
+  "title_en": "CIJ Make-Up Budget Planner",
+  "desc_en": "Estimate shift make-up (ml) by temp, duty, nozzle; tie to $/L. Better planning reduces nozzle clogging and startup failures.",
+  "theme": "amber",
+  "inputs": [
+    {"name":"tempC","label":"Ambient temperature","unit":"°C","type":"number","min":5,"max":45,"step":1},
+    {"name":"hours","label":"Runtime this shift","unit":"h","type":"number","min":1,"max":24,"step":1},
+    {"name":"nozzle","label":"Nozzle size","unit":"µm","type":"select","options":["40","60","75"]},
+    {"name":"duty","label":"Print duty cycle","unit":"%","type":"number","min":0,"max":100,"step":5},
+    {"name":"price","label":"Make-up price","unit":"$/L","type":"number","min":5,"max":100,"step":0.5,"default":18}
+  ],
+  "outputs": [
+    {"name":"mu_est","label":"Estimated make-up","unit":"ml/shift","precision":0},
+    {"name":"budget","label":"Budget","unit":"$","precision":2}
+  ],
+  "formula": "mu_est = k(nozzle)*hours*(1+0.05*(tempC-20))*(0.5+0.5*duty/100); budget = mu_est/1000*price;",
+  "disclaimer_en": "Fit k(nozzle) using OEM specs and your logs."
+}
+</code></pre>
+<!-- /wp:html -->
+<!--ITB-END-->
+
+<p>Need more rigorous nozzle/duty math? Open the cluster calculator: <a href="/makeup-consumption-calculator/"
+        aria-label="Make-Up Consumption: ml/Hour by Nozzle & Duty Cycle">Make-Up Consumption: ml/Hour by Nozzle &amp;
+        Duty Cycle</a>.</p>
+
+<h3 id="pigment-settling">H3 — Pigmented whites: settling &amp; agglomeration tied to <em>nozzle clogging and startup
+        failures</em></h3>
+<p>TiO<sub>2</sub> whites settle faster than dye systems. Stokes-style scaling captures the intuition:
+    <code>v ∝ (ρ<sub>p</sub>−ρ<sub>f</sub>)·r² / μ</code>. Warm, thin ink + long idle → faster settling → filter load →
+    tomorrow’s <strong>nozzle clogging and startup failures</strong>. Respect recirculation and clean stops; exercise
+    dormant loops after long weekends.</p>
+
+<h3 id="compatibility">H3 — Compatibility &amp; “look-alike” fluids (prevent <em>nozzle clogging and startup
+        failures</em>)</h3>
+<p style="background:#fff7ea;padding:1rem;border-radius:.6rem;margin:1rem 0;"><strong>Orange card — mixing
+        risks:</strong> Don’t mix OEM-A ink with OEM-B make-up without validation. Small cosolvent deltas change binder
+    solvency and κ, amplifying <em>nozzle clogging and startup failures</em>. Zone guns and stores by <em>family</em>,
+    not only color.</p>
+
+<h3 id="shelf-life">H3 — Shelf life, FIFO &amp; storage that avert <em>nozzle clogging and startup failures</em></h3>
+<p>Expired ink = binder aging + volatile loss = gummy precipitates. Once pumped, sludge taxes filters and pumps. Store
+    sealed at <strong>18–28 °C</strong>, <strong>40–60% RH</strong>, away from doors/solar gain; barcode lots and
+    enforce FIFO. Seasonal handling: <a href="/cij-ink-shelf-life-storage/"
+        aria-label="Ink Shelf Life, Storage & Temperature Control">Ink Shelf Life, Storage &amp; Temperature
+        Control</a>. For chemistry families shaping risk, see <a href="/cij-ink-families/"
+        aria-label="CIJ Ink Families: MEK vs Ethanol vs Dye-Pigment">CIJ Ink Families: MEK vs Ethanol vs
+        Dye-Pigment</a>.</p>
+
+
+<!-- =======================================================
+H2 — Environment: humidity, dust, static vs nozzle clogging and startup failures (expanded ×3+)
+======================================================= -->
+
+<h2 id="environment">Environment: humidity, dust, static vs <em>nozzle clogging and startup failures</em></h2>
+
+<h3 id="humidity">H3 — Humidity windows for <em>nozzle clogging and startup failures</em></h3>
+<p>Low RH (&lt;35%) accelerates meniscus drying and multiplies static on films; very high RH (&gt;70%) slows dry-down
+    and risks moisture ingress via gutter air. Keep a hygrometer next to each coder and record readings with your shift
+    checks.</p>
+
+<table style="width:100%;border-collapse:collapse;margin:1rem 0;">
+    <caption><strong>RH risk bands impacting <em>nozzle clogging and startup failures</em></strong></caption>
+    <thead>
+        <tr>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">RH band</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">CIJ risk</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">TIJ risk</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Primary action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="background:#fff7ea;">
+            <td>&lt;35%</td>
+            <td>Dry tip; static ↑</td>
+            <td>Cartridge dehydration</td>
+            <td>Humidify→40–50%; ionize films</td>
+        </tr>
+        <tr>
+            <td>40–60%</td>
+            <td>Optimal</td>
+            <td>Optimal</td>
+            <td>Monitor only</td>
+        </tr>
+        <tr style="background:#fff7ea;">
+            <td>&gt;70%</td>
+            <td>Slow dry; moisture path</td>
+            <td>Smear risk on coated board</td>
+            <td>Dehumidify; air knife</td>
+        </tr>
+    </tbody>
+</table>
+
+<!--ITB-START-->
+<!-- wp:html -->
+<pre><code class="itb-tool">
+{
+  "id": "itb-humidity-static-v5",
+  "type": "estimator",
+  "title_en": "Humidity–Static Risk Estimator",
+  "desc_en": "Score NCSF risk from RH, substrate, and line speed; output countermeasures.",
+  "theme": "slate",
+  "inputs": [
+    {"name":"rh","label":"Relative humidity","unit":"%","type":"number","min":10,"max":90,"step":1},
+    {"name":"substrate","label":"Substrate","unit":"—","type":"select","options":["PET","OPP film","Glass","Paperboard","Alu can"]},
+    {"name":"speed","label":"Line speed","unit":"m/min","type":"number","min":10,"max":500,"step":5}
+  ],
+  "outputs": [
+    {"name":"risk","label":"Static/clog risk level","unit":"—","precision":1},
+    {"name":"primary","label":"Primary countermeasure","unit":"—","precision":0}
+  ],
+  "logic": "Risk rises when RH<40%, film substrates, and speed>120. Map to Low/Med/High with grounding/ionizer/RH actions.",
+  "disclaimer_en": "Screening only; verify with a field meter."
+}
+</code></pre>
+<!-- /wp:html -->
+<!--ITB-END-->
+
+<h3 id="dust-ingress">H3 — Dust ingress &amp; the gutter gradient in <em>nozzle clogging and startup failures</em></h3>
+<p>CIJ gutters entrain air with droplets; in dusty halls (carton chop, flour, cement), particulates follow the gradient
+    into the head. Positive-pressure printheads or a gentle clean-air bleed flips that gradient and keeps debris out.
+</p>
+
+<p style="background:#fff7ea;padding:1rem 1.1rem;border-radius:.6rem;margin:1rem 0;"><strong>Air math
+        (planning):</strong> A laminar clean-air bleed of <code>Q ≈ 5–15 L/min</code> across the plate offsets ingress
+    <em>provided</em> the stream doesn’t disturb droplet flight. For seasonal dust surges, pre-empt with housekeeping
+    bursts and localized air curtains.</p>
+
+<h3 id="static">H3 — Static fields deflect droplets (driving <em>nozzle clogging and startup failures</em>)</h3>
+<p>Ground conveyors/coders to a common earth. On stubborn film lines add ionizing bars upstream; target neutral field at
+    nominal speed. Use a handheld meter to audit before/after effect.</p>
+
+<!--ITB-START-->
+<!-- wp:html -->
+<pre><code class="itb-tool">
+{
+  "id": "itb-esd-energy-v3",
+  "type": "calculator",
+  "title_en": "Static Energy Quick-Calc",
+  "desc_en": "Estimate stored ESD energy to gauge nuisance discharge near charge plates.",
+  "theme": "amber",
+  "inputs": [
+    {"name":"cap","label":"Estimated capacitance","unit":"pF","type":"number","min":10,"max":5000,"step":10},
+    {"name":"volt","label":"Static voltage","unit":"kV","type":"number","min":0,"max":30,"step":0.1}
+  ],
+  "outputs": [
+    {"name":"energy","label":"Stored energy","unit":"mJ","precision":2}
+  ],
+  "formula": "E = 0.5 * C * V^2 (C in Farads, V in Volts); convert to mJ.",
+  "disclaimer_en": "Use an ESD meter for real readings."
+}
+</code></pre>
+<!-- /wp:html -->
+<!--ITB-END-->
+
+
+<!-- =======================================================
+H2 — Operational discipline: startups, cleans, clean stops against nozzle clogging and startup failures
+======================================================= -->
+
+<h2 id="ops">Operational discipline: startups, cleans, clean stops against <em>nozzle clogging and startup failures</em>
+</h2>
+
+<h3 id="startups">H3 — Startups that prevent <em>nozzle clogging and startup failures</em></h3>
+<ol>
+    <li><strong>Pre-check (60–90 s):</strong> Visual plate, fluid levels, hose dryness, clamps seated; record RH/Temp.
+    </li>
+    <li><strong>Init via UI:</strong> let visco/prime routines complete; don’t bypass to “save time.”</li>
+    <li><strong>Acceptance before online:</strong> CIJ—jet centered in gutter; pattern ≥99% scan; TIJ—no missing bars at
+        300×300 dpi.</li>
+</ol>
+
+<!--ITB-START-->
+<!-- wp:html -->
+<pre><code class="itb-tool">
+{
+  "id": "itb-startup-timer-v2",
+  "type": "checker",
+  "title_en": "Startup Readiness Timer",
+  "desc_en": "Track CIJ ≤180 s, TIJ ≤30 s; flag late starts correlated with nozzle clogging and startup failures.",
+  "theme": "slate",
+  "inputs": [
+    {"name":"tech","label":"Technology","unit":"—","type":"select","options":["CIJ","TIJ"]},
+    {"name":"seconds","label":"Init seconds","unit":"s","type":"number","min":1,"max":600,"step":1}
+  ],
+  "outputs": [
+    {"name":"flag","label":"Status","unit":"—","precision":0}
+  ],
+  "logic": "CIJ OK if ≤180; TIJ OK if ≤30; else flag LateStart."
+}
+</code></pre>
+<!-- /wp:html -->
+<!--ITB-END-->
+
+<h3 id="cleaning">H3 — Cleaning is a reset, not a smear (reduce <em>nozzle clogging and startup failures</em>)</h3>
+<ul>
+    <li>Use OEM cleaner/make-up + lint-free wipes; motion is downward/outward.</li>
+    <li>Never blast compressed air into the return block; no dry wiping.</li>
+    <li>Avoid flooding while vacuum is active; don’t over-dilute the core loop.</li>
+</ul>
+
+<p style="background:#fff7ea;padding:1rem;border-radius:.6rem;margin:1rem 0;"><strong>Orange acceptance card:</strong>
+    “CIJ: stable breakup, gutter capture centered, no satellites @ 10×. TIJ: uniform bar field; no dropout &gt; 1 mm.”
+    Paste into SOP to suppress <em>nozzle clogging and startup failures</em>.</p>
+
+<h3 id="shutdown">H3 — Clean stops are non-negotiable for <em>nozzle clogging and startup failures</em></h3>
+<p><strong>Never hard-power a CIJ.</strong> Always invoke auto-flush to retract ink, solvent-flush nozzle/gutter, and
+    cap. TIJ must cap for breaks ≥20 min; uncapped overnight is the fastest path to morning <strong>nozzle clogging and
+        startup failures</strong>.</p>
+
+<!--ITB-START-->
+<!-- wp:html -->
+<pre><code class="itb-tool">
+{
+  "id": "itb-shutdown-compliance-v3",
+  "type": "checker",
+  "title_en": "Clean-Stop Compliance",
+  "desc_en": "Compute % of stops executed via auto-flush vs total stops.",
+  "theme": "amber",
+  "inputs": [
+    {"name":"stops","label":"Total stops","unit":"count","type":"number","min":0,"max":200,"step":1},
+    {"name":"cleanstops","label":"Auto-flush (clean) stops","unit":"count","type":"number","min":0,"max":200,"step":1}
+  ],
+  "outputs": [
+    {"name":"pct","label":"Compliance","unit":"%","precision":1},
+    {"name":"flag","label":"Status","unit":"—","precision":0}
+  ],
+  "logic": "Target ≥98%. Green if ≥98, yellow 95–98, red <95. Low compliance predicts next-shift NCSF."
+}
+</code></pre>
+<!-- /wp:html -->
+<!--ITB-END-->
+
+
+<!-- =======================================================
+H2 — Technology-specific playbooks (CIJ vs TIJ) to cut nozzle clogging and startup failures
+======================================================= -->
+
+<h2 id="tech-playbooks">Technology-specific playbooks (CIJ vs TIJ) to cut <em>nozzle clogging and startup failures</em>
+</h2>
+
+<h3 id="cij">H3 — CIJ: keep the loop healthy</h3>
+<ul>
+    <li><strong>Auto-flush always</strong>; skipping it hardens residues into tomorrow’s clogs.</li>
+    <li><strong>Gutter centering</strong> is the canary for charge/deflection drift—realign before going online.</li>
+    <li><strong>Filter/pressure trend</strong>: creeping pump % = loaded filters; change by hours, not alarms.</li>
+    <li><strong>Positive air</strong> kits on dusty lines to resist ingress and reduce <em>nozzle clogging and startup
+            failures</em>.</li>
+</ul>
+
+<h3 id="tij">H3 — TIJ: the cartridge is the printhead (avoid <em>nozzle clogging and startup failures</em>)</h3>
+<ul>
+    <li><strong>Cap discipline</strong>: dryness → crust → <em>nozzle clogging and startup failures</em>. Re-cap every
+        meaningful pause.</li>
+    <li><strong>Wicking wipes</strong> with the correct fluid (DI water for aqueous; approved solvent for solvent
+        systems).</li>
+    <li><strong>Swap vs nurse</strong>: don’t burn OEE trying to rescue a dying plate—swap, document, move on.</li>
+</ul>
+
+<p>After head/fluids are stable, isolate residual artifacts with the cluster checklist <a
+        href="/cij-print-quality-checklist/" aria-label="CIJ Print Quality Troubleshooting Checklist">CIJ Print Quality
+        Troubleshooting Checklist</a>.</p>
+
+
+<!-- =======================================================
+H2 — Weekly→Annual cadence: logging & parts to prevent nozzle clogging and startup failures
+======================================================= -->
+
+<h2 id="cadence">Weekly→Annual cadence: logging &amp; parts to prevent <em>nozzle clogging and startup failures</em>
+</h2>
+
+<table style="width:100%;border-collapse:collapse;margin:1rem 0;">
+    <caption><strong>Preventive cadence mapped to <em>nozzle clogging and startup failures</em></strong></caption>
+    <thead>
+        <tr>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Task</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">CIJ focus</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">TIJ focus</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Frequency</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Accept/Fail</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="background:#fff7ea;">
+            <td>Test pattern</td>
+            <td>Jet/gutter; satellites</td>
+            <td>No missing bars</td>
+            <td>Daily</td>
+            <td>Pass before online</td>
+            <td>Record RH/Temp</td>
+        </tr>
+        <tr>
+            <td>Auto-flush shutdown</td>
+            <td>Mandatory</td>
+            <td>Cap if idle ≥20 min</td>
+            <td>Every stop</td>
+            <td>≥98% compliance</td>
+            <td>Weekly audit</td>
+        </tr>
+        <tr style="background:#fff7ea;">
+            <td>External wipe</td>
+            <td>Lint-free + OEM cleaner</td>
+            <td>Wicking wipe</td>
+            <td>End of shift</td>
+            <td>No residue/drag lines</td>
+            <td>Replace wipes weekly</td>
+        </tr>
+        <tr>
+            <td>Filter kits</td>
+            <td>Main/make-up/pump</td>
+            <td>—</td>
+            <td>Per hours (e.g., 5k) or annual</td>
+            <td>Pump% normalized</td>
+            <td>Stagger across coders</td>
+        </tr>
+        <tr style="background:#fff7ea;">
+            <td>Firmware</td>
+            <td>Latest stable</td>
+            <td>Latest stable</td>
+            <td>Quarterly</td>
+            <td>No known init bugs</td>
+            <td>Plan off-shift</td>
+        </tr>
+        <tr>
+            <td>ESD audit</td>
+            <td>Grounds/ionizers</td>
+            <td>Grounds/ionizers</td>
+            <td>Quarterly</td>
+            <td>Neutral field</td>
+            <td>Meter log</td>
+        </tr>
+    </tbody>
+</table>
+
+<!--ITB-START-->
+<!-- wp:html -->
+<pre><code class="itb-tool">
+{
+  "id": "itb-filter-life-v3",
+  "type": "estimator",
+  "title_en": "Filter Life & Pump Load Estimator",
+  "desc_en": "Relate pump % trend + hours to a filter-change window; prevent NCSF.",
+  "theme": "amber",
+  "inputs": [
+    {"name":"base","label":"Pump % @ new filter","unit":"%","type":"number","min":10,"max":80,"step":1},
+    {"name":"now","label":"Pump % now","unit":"%","type":"number","min":10,"max":100,"step":1},
+    {"name":"hours","label":"Hours since last change","unit":"h","type":"number","min":0,"max":10000,"step":10}
+  ],
+  "outputs": [
+    {"name":"load","label":"Relative filter load","unit":"%","precision":0},
+    {"name":"advice","label":"Advice","unit":"—","precision":0}
+  ],
+  "logic": "Load ≈ (now - base)/(100 - base). If >70%, schedule change before nozzle clogging and startup failures."
+}
+</code></pre>
+<!-- /wp:html -->
+<!--ITB-END-->
+
+
+<!-- =======================================================
+H2 — Safety & compliance: solvents, ESD, bonding/grounding for nozzle clogging and startup failures control
+======================================================= -->
+
+<h2 id="safety">Safety &amp; compliance for <em>nozzle clogging and startup failures</em> control</h2>
+
+<p>Quality and safety are coupled: solvent discipline and ESD control lower incidents and <em>nozzle clogging and
+        startup failures</em> together.</p>
+
+<ul>
+    <li><strong>Flammables:</strong> store/dispense per OSHA; bond &amp; ground containers; ventilate decant zones.</li>
+    <li><strong>ESD program (ANSI/ESD S20.20):</strong> equipment grounding, personnel grounding, ionization for
+        isolated conductors, periodic verification.</li>
+    <li><strong>SDS at point-of-use:</strong> train on PEL/TWA, first aid, spill response; segregate incompatible
+        wastes.</li>
+</ul>
+
+<p style="background:#fff7ea;padding:1rem;border-radius:.6rem;margin:1rem 0;"><strong>Static primer:</strong>
+    <code>Q = C·V</code>, <code>E = ½·C·V²</code>. Even small C at kV potentials yields nuisance discharges near charge
+    plates—degrading marks and nudging systems toward <em>nozzle clogging and startup failures</em>.</p>
+
+
+<!-- =======================================================
+H2 — KPIs & dashboards predicting nozzle clogging and startup failures (expanded)
+======================================================= -->
+
+<h2 id="kpis">KPIs &amp; dashboards predicting <em>nozzle clogging and startup failures</em></h2>
+
+<ul>
+    <li><strong>Clean-Stop %</strong> = auto-flush stops ÷ total stops (<em>target ≥98%</em>).</li>
+    <li><strong>First-Pass Test Pattern %</strong> (target ≥95%).</li>
+    <li><strong>Filter Interval Adherence</strong> (±10% of scheduled hours).</li>
+    <li><strong>Make-Up Spend Index</strong> (ml/h normalized to duty &amp; temp).</li>
+    <li><strong>Dust/Static Incidents</strong> per 10k packs—trend down with seasonal controls.</li>
+</ul>
+
+<!--ITB-START-->
+<!-- wp:html -->
+<pre><code class="itb-tool">
+{
+  "id": "itb-kpi-mini-v3",
+  "type": "calculator",
+  "title_en": "NCSF KPI Mini-Dashboard",
+  "desc_en": "Compute Clean-Stop %, First-Pass %, and a make-up drift index.",
+  "theme": "slate",
+  "inputs": [
+    {"name":"stops","label":"Total stops","unit":"count","type":"number","min":0,"max":200,"step":1},
+    {"name":"clean","label":"Auto-flush stops","unit":"count","type":"number","min":0,"max":200,"step":1},
+    {"name":"tests","label":"Total test patterns","unit":"count","type":"number","min":0,"max":200,"step":1},
+    {"name":"pass","label":"Pass on first try","unit":"count","type":"number","min":0,"max":200,"step":1},
+    {"name":"mu","label":"Make-up ml/h (norm)","unit":"ml/h","type":"number","min":0,"max":500,"step":1},
+    {"name":"mu_base","label":"Baseline ml/h","unit":"ml/h","type":"number","min":0,"max":500,"step":1}
+  ],
+  "outputs": [
+    {"name":"cs","label":"Clean-Stop %","unit":"%","precision":1},
+    {"name":"fp","label":"First-Pass %","unit":"%","precision":1},
+    {"name":"drift","label":"Make-Up Drift","unit":"%","precision":1}
+  ],
+  "formula": "cs=100*clean/max(stops,1); fp=100*pass/max(tests,1); drift=100*(mu-max(mu_base,1))/max(mu_base,1);",
+  "disclaimer_en": "Rising drift + falling Clean-Stop % predict nozzle clogging and startup failures."
+}
+</code></pre>
+<!-- /wp:html -->
+<!--ITB-END-->
+
+
+<!-- =======================================================
+H2 — Quick “what to do when…” specific to nozzle clogging and startup failures (expanded)
+======================================================= -->
+
+<h2 id="quick-guide">Quick “what to do when…” specific to <em>nozzle clogging and startup failures</em></h2>
+
+<h3 id="cij-wont-start">H3 — CIJ won’t reach Ready (avoid <em>nozzle clogging and startup failures</em>)</h3>
+<ol>
+    <li>Verify correct ink/make-up; confirm μ displays credibly; if pump % high, suspect filters.</li>
+    <li>Run OEM clean; inspect plate; re-align jet to gutter center.</li>
+    <li>Soft reboot via UI; if lag repeats, schedule firmware update.</li>
+</ol>
+
+<h3 id="tij-gapped">H3 — TIJ gaps after break (typical <em>nozzle clogging and startup failures</em>)</h3>
+<ol>
+    <li>Cap/uncap cycle; wicking wipe with correct fluid.</li>
+    <li>Purge routine; if no recovery in 2 tries, <strong>swap cartridge</strong>.</li>
+    <li>Audit RH; add a small humidifier if &lt;40%.</li>
+</ol>
+
+<h3 id="dust-storm">H3 — Dust-heavy day (preempt <em>nozzle clogging and startup failures</em>)</h3>
+<ul>
+    <li>Increase wipe frequency; shorten head exposure between runs.</li>
+    <li>Enable positive-pressure or a clean-air bleed; relocate print zone away from plume.</li>
+    <li>Add an ionizer if static compounds dust attraction.</li>
+</ul>
+
+
+<!-- =======================================================
+H2 — Root cause matrix (rank & resolve) for nozzle clogging and startup failures
+======================================================= -->
+
+<h2 id="rcm">Root cause matrix (rank &amp; resolve) for <em>nozzle clogging and startup failures</em></h2>
+
+<table style="width:100%;border-collapse:collapse;margin:1rem 0;">
+    <caption><strong>RCM — link symptoms to fixes that reduce <em>nozzle clogging and startup failures</em></strong>
+    </caption>
+    <thead>
+        <tr>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Symptom</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Likely cause</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Verify</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Immediate fix</th>
+            <th style="text-align:left;border-bottom:1px solid #ddd;">Preventive</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="background:#fff7ea;">
+            <td>Satellites / overspray</td>
+            <td>μ low; hot ambient</td>
+            <td>Visco reading</td>
+            <td>Adjust make-up; cool zone</td>
+            <td>Seasonal μ planning</td>
+        </tr>
+        <tr>
+            <td>Random deflection</td>
+            <td>Static; fouled plates</td>
+            <td>Field meter; visual</td>
+            <td>Ionize; clean plates</td>
+            <td>Grounding; RH 40–60%</td>
+        </tr>
+        <tr style="background:#fff7ea;">
+            <td>Morning hard clog</td>
+            <td>Skipped auto-flush</td>
+            <td>Stop logs</td>
+            <td>Deep clean</td>
+            <td>≥98% clean-stop KPI</td>
+        </tr>
+        <tr>
+            <td>Pump % creeping</td>
+            <td>Filters loading</td>
+            <td>Trend chart</td>
+            <td>Replace kit</td>
+            <td>Change by hours</td>
+        </tr>
+    </tbody>
+</table>
+
+
+<!-- =======================================================
+H2 — Related reading on your site (distributed natural links)
+======================================================= -->
+
+<h2 id="internal-links">Related reading on your site</h2>
+
+<p>When make-up math and nozzle sizing steer both quality and cost, use <a href="/makeup-consumption-calculator/"
+        aria-label="Make-Up Consumption Calculator">Make-Up Consumption: ml/Hour by Nozzle &amp; Duty Cycle</a>. For
+    chemistry families and behaviors that influence <em>nozzle clogging and startup failures</em>, see <a
+        href="/cij-ink-families/" aria-label="CIJ Ink Families">CIJ Ink Families: MEK vs Ethanol vs Dye-Pigment</a>.
+    After the head is stable, separate residual artifacts using <a href="/cij-print-quality-checklist/"
+        aria-label="CIJ Print Quality Troubleshooting Checklist">CIJ Print Quality Troubleshooting Checklist</a>. To
+    avoid morning clogs through storage/rotation discipline, revisit <a href="/cij-ink-shelf-life-storage/"
+        aria-label="Ink Shelf Life, Storage & Temperature Control">Ink Shelf Life, Storage &amp; Temperature
+        Control</a>. And keep the pillar handy for system decisions: <a href="/coding-marking-consumables/"
+        aria-label="Coding & Marking Consumables pillar">Coding &amp; Marking Consumables</a>.</p>
+
+
+<!-- =======================================================
+H2 — Glossary focused on nozzle clogging and startup failures
+======================================================= -->
+
+<h2 id="glossary">Glossary focused on <em>nozzle clogging and startup failures</em></h2>
+
+<ul>
+    <li><strong>Auto-flush / clean stop:</strong> OEM routine retracting ink, flushing nozzle/gutter, and parking
+        sealed; skipping is a top root of <em>nozzle clogging and startup failures</em>.</li>
+    <li><strong>Gutter centering:</strong> unprinted jet lands centrally in the return gutter; drift implies
+        charge/deflection issues.</li>
+    <li><strong>Wicking wipe:</strong> TIJ cleaning motion pulling debris away rather than scrubbing across nozzles.
+    </li>
+    <li><strong>Positive-pressure head:</strong> clean-air bleed across the plate to resist particle ingress near the
+        orifice.</li>
+</ul>
+
+
+<!-- =======================================================
+H2 — SEO utility: density checker for "nozzle clogging and startup failures"
+======================================================= -->
+
+<h2 id="seo-tool">SEO utility: density checker for “<em>nozzle clogging and startup failures</em>”</h2>
+
+<!--ITB-START-->
+<!-- wp:html -->
+<pre><code class="itb-tool">
+{
+  "id": "itb-seo-density-v1",
+  "type": "checker",
+  "title_en": "Focus Keyword Density Checker",
+  "desc_en": "Counts 'nozzle clogging and startup failures' and estimates % vs total words in this page.",
+  "theme": "amber",
+  "inputs": [
+    {"name":"total_words","label":"Estimated total words on page","unit":"words","type":"number","min":500,"max":20000,"step":50},
+    {"name":"occurs","label":"Occurrences of the focus keyword","unit":"count","type":"number","min":0,"max":500,"step":1}
+  ],
+  "outputs": [
+    {"name":"density","label":"Keyword density","unit":"%","precision":2},
+    {"name":"status","label":"Target check (≈1%)","unit":"—","precision":0}
+  ],
+  "logic": "density = 100*occurs/max(total_words,1); status = (density>=0.7 && density<=1.3)?'OK (~1%)':'Adjust';",
+  "disclaimer_en": "This is a heuristic; Rank Math will calculate from rendered HTML."
+}
+</code></pre>
+<!-- /wp:html -->
+<!--ITB-END-->
+
+
+<!-- =======================================================
+References (stable; PDFs favored)
+======================================================= -->
+
+<h2 id="references">References</h2>
+<ul>
+    <li><a
+            href="https://www.videojet.com/wp-content/uploads/dam/OEM/CIJ/1580/operator-manuals/463170-21-aa-videojet-1580-operator-manual-en.pdf">Videojet
+            — 1580 Operator Manual (printhead cleaning &amp; auto-flush)</a></li>
+    <li><a href="https://global.videojet.com/wp-content/uploads/dam/pdf/MEA/BR/br-1040-mea.pdf">Videojet — 1040 CIJ
+            Brochure (auto-flushing overview)</a></li>
+    <li><a
+            href="https://www.videojet.com/wp-content/uploads/dam/pdf/NA%20-%20English/361069-01_Excel_2000_Service_Manual_Cleaning_the_Printhead.pdf">Videojet
+            — Excel 2000 Service Manual (printhead cleaning excerpt)</a></li>
+
+    <li><a
+            href="https://www.domino-printing.com/resources/English/Whitepapers/Domino-Craft-Brewers-Guide-to-Coding.pdf">Domino
+            Printing — Coding Technology Guide (CIJ/TIJ fundamentals)</a></li>
+    <li><a href="https://www.artisantg.com/info/Domino_A_Series_Manual_202332910340.pdf">Domino — A-Series Manual
+            (service &amp; positive air)</a></li>
+
+    <li><a
+            href="https://d2bi2rpyabw4cc.cloudfront.net/wp-content/uploads/SPS-SC019908042017-TIJ-2.5-Aqueous-Cartridge-Cleaning-and-Maintenance.pdf">HP
+            — TIJ 2.5 Aqueous Cartridge Cleaning &amp; Maintenance</a></li>
+    <li><a href="https://h20195.www2.hp.com/v2/GetDocument.aspx?docname=4AA6-6482ENW">HP — TIJ 2.5 Technology Family
+            Overview</a></li>
+
+    <li><a href="https://www.esda.org/assets/Documents/Fundamentals-of-ESD-Part-2-Principles-of-ESD-Control.pdf">ESD
+            Association — Principles of ESD Control</a></li>
+    <li><a href="https://www.esda.org/assets/News/Update-to-ANSI-ESD-S2020-2014-FINAL.pdf">ESD Association — Updates to
+            ANSI/ESD S20.20</a></li>
+
+    <li><a href="https://www.osha.gov/sites/default/files/training-library_FlammableLessonPlan.pdf">OSHA — Flammable
+            Liquids: Bonding &amp; Grounding</a></li>
+    <li><a href="https://ehs.psu.edu/sites/ehs/files/osha_flammables-1_1.pdf">Penn State EHS — Flammable &amp;
+            Combustible Liquids</a></li>
+    <li><a href="https://ehs.stanford.edu/wp-content/uploads/24-119_Grounding_Bonding.pdf">Stanford EHS — Bonding &amp;
+            Grounding (primer)</a></li>
+
+    <li><a href="https://www.cdc.gov/niosh/npg/npgd0069.html">NIOSH — Pocket Guide: 2-Butanone (MEK)</a></li>
+    <li><a href="https://www.epa.gov/sites/default/files/2016-09/documents/methyl-ethyl-ketone.pdf">U.S. EPA — Methyl
+            Ethyl Ketone: Toxicological Profile</a></li>
+</ul>
+
+
+
+
+<!-- =======================================================
+End of cluster page
+======================================================= -->
