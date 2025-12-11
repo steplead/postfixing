@@ -1,0 +1,419 @@
+[
+  {
+    "id": "cij-adhesion-wet-pet-glass-owrk-1",
+    "type": "explainer",
+    "title_en": "OWRK Work-of-Adhesion Explainer",
+    "desc_en": "See how contact angle and liquid tension interact with PET/glass energies.",
+    "theme": "amber",
+    "inputs": [
+      {
+        "name": "substrate",
+        "label": "Substrate",
+        "type": "select",
+        "options": [
+          "PET (untreated)",
+          "PET (corona/plasma)",
+          "Glass (clean)"
+        ]
+      },
+      {
+        "name": "gamma_l",
+        "label": "Ink surface tension \u03b3LV",
+        "unit": "mN/m",
+        "type": "number",
+        "min": 20,
+        "max": 60,
+        "step": 1,
+        "value": 40
+      },
+      {
+        "name": "theta",
+        "label": "Contact angle \u03b8",
+        "unit": "deg",
+        "type": "number",
+        "min": 0,
+        "max": 120,
+        "step": 1,
+        "value": 35
+      }
+    ],
+    "outputs": [
+      {
+        "name": "wa",
+        "label": "W_A estimate",
+        "unit": "mN/m",
+        "precision": 1
+      },
+      {
+        "name": "tip",
+        "label": "Tuning tip",
+        "unit": "\u2014",
+        "precision": 0
+      }
+    ],
+    "logic": "W_A = \u03b3LV*(1+cos\u03b8). Improve: lower \u03b8 with activation/primer; tune makeup to adjust \u03b3LV.",
+    "anchor_id": "owrk",
+    "section": "1.1 Owens\u2013Wendt (OWRK) Component Matching",
+    "tags": [
+      "owrk",
+      "wetting",
+      "adhesion",
+      "pet",
+      "glass"
+    ]
+  },
+  {
+    "id": "cij-adhesion-dyne-window-3",
+    "type": "calculator",
+    "title_en": "PET Dyne \u2192 Ink Tension Window",
+    "desc_en": "Suggests an ink \u03b3LV window based on current PET dyne level.",
+    "theme": "amber",
+    "inputs": [
+      {
+        "name": "pet_dyne",
+        "label": "PET dyne (dynes/cm)",
+        "type": "number",
+        "min": 40,
+        "max": 60,
+        "step": 1,
+        "value": 54
+      },
+      {
+        "name": "margin",
+        "label": "Safety margin (dynes)",
+        "type": "number",
+        "min": 6,
+        "max": 12,
+        "step": 1,
+        "value": 8
+      }
+    ],
+    "outputs": [
+      {
+        "name": "low",
+        "label": "Ink \u03b3LV low",
+        "unit": "mN/m",
+        "precision": 0
+      },
+      {
+        "name": "high",
+        "label": "Ink \u03b3LV high",
+        "unit": "mN/m",
+        "precision": 0
+      },
+      {
+        "name": "note",
+        "label": "Note",
+        "unit": "\u2014",
+        "precision": 0
+      }
+    ],
+    "logic": "Recommend ink_tension \u2208 [pet_dyne - (margin+2), pet_dyne - margin]; includes extra slack for line noise.",
+    "anchor_id": "pet-process",
+    "section": "2.3 Process Controls that Matter",
+    "tags": [
+      "pet",
+      "dyne",
+      "ink",
+      "window"
+    ]
+  },
+  {
+    "id": "cij-adhesion-wet-pet-glass-venting-2",
+    "type": "checker",
+    "title_en": "Wet-Out & Silane Readiness Checker",
+    "desc_en": "Quick pass/fail for ink tension vs substrate dyne and silane steps.",
+    "theme": "green",
+    "inputs": [
+      {
+        "name": "substrate",
+        "label": "Substrate",
+        "type": "select",
+        "options": [
+          "Glass (clean)",
+          "PET (corona 54 dynes)",
+          "PET (untreated 44 dynes)"
+        ]
+      },
+      {
+        "name": "ink_tension",
+        "label": "Ink surface tension",
+        "unit": "mN/m",
+        "type": "number",
+        "min": 20,
+        "max": 60,
+        "step": 1,
+        "value": 42
+      },
+      {
+        "name": "silane",
+        "label": "Silane/primer applied?",
+        "type": "select",
+        "options": [
+          "No",
+          "Yes (proper dwell)",
+          "Yes (unknown)"
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "result",
+        "label": "Wet-out result",
+        "unit": "\u2014",
+        "precision": 0
+      },
+      {
+        "name": "advice",
+        "label": "Next action",
+        "unit": "\u2014",
+        "precision": 0
+      }
+    ],
+    "logic": "OK if substrate dyne \u2265 ink_tension + 8 (rule). If substrate=glass and silane='No', downgrade result unless ink is inherently glass-active.",
+    "anchor_id": "glass-ops",
+    "section": "3.1 Practical Glass Playbook",
+    "tags": [
+      "silane",
+      "wet-out",
+      "dyne",
+      "glass",
+      "pet"
+    ]
+  },
+  {
+    "id": "cij-adhesion-airknife-4",
+    "type": "estimator",
+    "title_en": "Air-Knife Sizing for Film Thinning",
+    "desc_en": "Rough sizing of nozzle distance & velocity to reach sub-10 \u03bcm film at print window.",
+    "theme": "amber",
+    "inputs": [
+      {
+        "name": "distance",
+        "label": "Nozzle \u2192 window distance",
+        "unit": "mm",
+        "type": "number",
+        "min": 50,
+        "max": 400,
+        "step": 10,
+        "value": 180
+      },
+      {
+        "name": "speed",
+        "label": "Conveyor speed",
+        "unit": "m/min",
+        "type": "number",
+        "min": 10,
+        "max": 90,
+        "step": 1,
+        "value": 36
+      },
+      {
+        "name": "initfilm",
+        "label": "Initial film thickness",
+        "unit": "\u03bcm",
+        "type": "number",
+        "min": 5,
+        "max": 200,
+        "step": 1,
+        "value": 60
+      }
+    ],
+    "outputs": [
+      {
+        "name": "vreq",
+        "label": "Required air velocity",
+        "unit": "m/s",
+        "precision": 0
+      },
+      {
+        "name": "note",
+        "label": "Note",
+        "unit": "\u2014",
+        "precision": 0
+      }
+    ],
+    "logic": "Heuristic: vreq \u2248 5 + 0.2*initfilm + 0.05*speed + 0.02*distance (cap at 120 m/s).",
+    "anchor_id": "airknife",
+    "section": "3.2 Air-Knife & Timing",
+    "tags": [
+      "air-knife",
+      "drainage",
+      "film"
+    ]
+  },
+  {
+    "id": "cij-adhesion-theta-target-5",
+    "type": "planner",
+    "title_en": "Contact Angle Target Planner",
+    "desc_en": "Pick substrate and duty, get \u03b8 targets and quick tips.",
+    "theme": "amber",
+    "inputs": [
+      {
+        "name": "substrate",
+        "label": "Substrate",
+        "type": "select",
+        "options": [
+          "PET (treated)",
+          "Glass (primed)"
+        ]
+      },
+      {
+        "name": "duty",
+        "label": "Duty severity",
+        "type": "select",
+        "options": [
+          "Dry ambient",
+          "Condensation",
+          "Rinse splash",
+          "Cold-chain + humidity"
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "theta_target",
+        "label": "\u03b8 target",
+        "unit": "deg",
+        "precision": 0
+      },
+      {
+        "name": "ops",
+        "label": "Ops tips",
+        "unit": "\u2014",
+        "precision": 0
+      }
+    ],
+    "logic": "If PET: base 35\u00b0, subtract 5\u00b0 for condensation, \u22128\u00b0 for rinse/cold-chain. If Glass: base 15\u00b0, subtract 3\u00b0 for condensation, \u22125\u00b0 for rinse/cold-chain.",
+    "anchor_id": "acceptance",
+    "section": "5.1 Do/Don\u2019t Checklist",
+    "tags": [
+      "theta",
+      "planner",
+      "targets"
+    ]
+  },
+  {
+    "id": "cij-adhesion-doe-6",
+    "type": "selector",
+    "title_en": "Mini-DOE Builder",
+    "desc_en": "Pick factors to generate a compact validation matrix.",
+    "theme": "amber",
+    "inputs": [
+      {
+        "name": "factors",
+        "label": "Factors",
+        "type": "multiselect",
+        "options": [
+          "PET Dyne",
+          "Glass Primer",
+          "Ink \u03b3LV",
+          "Air-Knife Velocity",
+          "Cold-Shock"
+        ]
+      },
+      {
+        "name": "rep",
+        "label": "Replicates per point",
+        "type": "number",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "value": 3
+      }
+    ],
+    "outputs": [
+      {
+        "name": "runs",
+        "label": "Estimated runs",
+        "unit": "\u2014",
+        "precision": 0
+      },
+      {
+        "name": "tip",
+        "label": "Design tip",
+        "unit": "\u2014",
+        "precision": 0
+      }
+    ],
+    "logic": "For k selected factors, suggest 3-level OA if k\u22644; else fractional with aliasing note. runs \u2248 3^k * rep (upper bound).",
+    "anchor_id": "test-matrix",
+    "section": "6.1 Minimal Test Matrix",
+    "tags": [
+      "doe",
+      "validation",
+      "sampling"
+    ]
+  },
+  {
+    "id": "cij-adhesion-ops-check-7",
+    "type": "checker",
+    "title_en": "Ops Readiness Check",
+    "desc_en": "Are PET dyne, ink \u03b3LV, primer timing, and air-knife tuned for today?",
+    "theme": "green",
+    "inputs": [
+      {
+        "name": "pet_dyne",
+        "label": "PET dyne now",
+        "unit": "dynes/cm",
+        "type": "number",
+        "min": 40,
+        "max": 60,
+        "step": 1,
+        "value": 52
+      },
+      {
+        "name": "ink",
+        "label": "Ink \u03b3LV",
+        "unit": "mN/m",
+        "type": "number",
+        "min": 30,
+        "max": 50,
+        "step": 1,
+        "value": 44
+      },
+      {
+        "name": "primer",
+        "label": "Glass primer status",
+        "type": "select",
+        "options": [
+          "N/A",
+          "Applied in window",
+          "Applied (late)"
+        ]
+      },
+      {
+        "name": "air",
+        "label": "Air-knife velocity",
+        "unit": "m/s",
+        "type": "number",
+        "min": 0,
+        "max": 120,
+        "step": 5,
+        "value": 80
+      }
+    ],
+    "outputs": [
+      {
+        "name": "score",
+        "label": "Readiness score",
+        "unit": "/100",
+        "precision": 0
+      },
+      {
+        "name": "action",
+        "label": "Top action",
+        "unit": "\u2014",
+        "precision": 0
+      }
+    ],
+    "logic": "Start 100; \u2212(max(0,(ink-(pet_dyne-8))*5)) for PET; \u221220 if primer late; \u221210 if air<60; floor at 0.",
+    "anchor_id": "ops-kpis",
+    "section": "7.1 Operations KPIs",
+    "tags": [
+      "ops",
+      "kpi",
+      "readiness"
+    ]
+  }
+]

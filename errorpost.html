@@ -1,792 +1,609 @@
-<!-- =======================================================
-H1 / Slug
-======================================================= -->
-
-<h1>Nozzle Clogging &amp; Startup Failures: Preventive Playbook</h1>
-<!-- permalink: /cij-nozzle-clogging-prevent/ -->
-
-
-<!-- =======================================================
-Intro — why this playbook matters (expanded ×3)
-======================================================= -->
-
-<p><strong>nozzle clogging and startup failures</strong> are not random, and they are rarely “operator luck.” They
-    emerge when fluid stability, environmental control, operational discipline, and component life fall out of
-    alignment. This cluster page turns first-principles into an on-the-floor operating system: orange data cards you can
-    paste into SOPs, checkable acceptance criteria, calculators and estimators, troubleshooting matrices, and a
-    preventive cadence that your teams can run every shift, week, and quarter.</p>
-
-<p style="background:#fff7ea;padding:1rem 1.1rem;border-radius:.6rem;margin:1rem 0;"><strong>Definition (NCSF):</strong>
-    <em>nozzle clogging and startup failures</em> = any CIJ/TIJ condition that blocks “Ready-to-Print in spec” within
-    the target initialization time or yields sustained defects linked to orifice obstruction, pigment agglomeration,
-    charge/deflection errors, cap discipline violations, or dust/static ingress. <strong>Targets:</strong> CIJ ready ≤
-    <strong>180 s</strong>; TIJ ready ≤ <strong>30 s</strong>; test pattern must pass <em>before</em> going online.</p>
-
-<ul>
-    <li><strong>Who uses this:</strong> line leaders, maintenance technicians, QE, and EHS—any role accountable for code
-        legibility and OEE.</li>
-    <li><strong>What you gain:</strong> a physics-first map of failure, fluid/compatibility guardrails, humidity/static
-        playbooks, “clean stop” rituals, and leading KPIs that predict issues <em>before</em> they become <strong>nozzle
-            clogging and startup failures</strong>.</li>
-</ul>
-
-<p>For the system-level consumables view (inks, make-up, cleaners, ribbons, labels) and how coding decisions cascade,
-    see the pillar <a href="/coding-marking-consumables/" aria-label="Coding & Marking Consumables pillar">Coding &amp;
-        Marking Consumables (CIJ/TIJ/TTO/Laser)</a>.</p>
-
-
-<!-- =======================================================
-H2 — Failure anatomy for nozzle clogging and startup failures (expanded ×3+)
-======================================================= -->
-
-<h2 id="failure-anatomy">Failure anatomy for <em>nozzle clogging and startup failures</em></h2>
-
-<p>CIJ relies on a continuous jet that breaks into droplets, is <em>charged</em> at an electrode, <em>deflected</em> in
-    a high-voltage field, marks the substrate, then lands in the gutter for recirculation. TIJ integrates microheaters
-    inside a disposable cartridge; “the cartridge <em>is</em> the printhead.” In both technologies, a handful of
-    physical balances—viscosity (μ), surface tension (σ), temperature (T), conductivity (κ), electric fields (E), air
-    quality, and alignment—decide whether you hit “Ready” or spiral into <strong>nozzle clogging and startup
-        failures</strong>.</p>
-
-<h3 id="failure-physics">H3 — Physics levers behind <em>nozzle clogging and startup failures</em></h3>
-<p style="background:#fff7ea;padding:1rem;border-radius:.6rem;margin:1rem 0;"><strong>Jet physics cards:</strong> Weber
-    number <code>We = ρu²d/σ</code> governs breakup; Capillary number <code>Ca = μu/σ</code> links viscosity to
-    satellite risk; Reynolds number <code>Re = ρud/μ</code> informs laminar breakup; charging uniformity hinges on κ and
-    clean geometry. Drift in any dimension pushes systems toward <em>nozzle clogging and startup failures</em>.</p>
-
-<h3 id="four-forces">H3 — The four forces that seed <em>nozzle clogging and startup failures</em></h3>
-<ol>
-    <li><strong>Fluid drift:</strong> μ & κ shift with temperature and make-up adds; wrong cleaners over-dilute;
-        pigmented whites settle; agglomerates scar filters and orifices.</li>
-    <li><strong>Environment:</strong> low RH dries the tip and amplifies static; dust rides the gutter gradient; heat
-        thins ink (μ↓); cold thickens (μ↑).</li>
-    <li><strong>Operational shortcuts:</strong> skipping auto-flush, dry wiping, leaving TIJ uncapped, hard power-offs,
-        long idle periods.</li>
-    <li><strong>Component wear:</strong> filters load (pump % creeps), seals breathe air, charge plates foul, legacy
-        firmware stretches inits—each can precipitate <strong>nozzle clogging and startup failures</strong>.</li>
-</ol>
-
-<h4 id="symptom-map">H4 — Symptom→cause map for <em>nozzle clogging and startup failures</em></h4>
-<table style="width:100%;border-collapse:collapse;margin:1rem 0;">
-    <caption><strong>Failure map aligned to <em>nozzle clogging and startup failures</em></strong></caption>
-    <thead>
-        <tr>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Subsystem</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Primary drift</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Line symptom</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Immediate check</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Preventive lever</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr style="background:#fff7ea;">
-            <td>Fluid (μ, κ)</td>
-            <td>Temp swing; over-dilution</td>
-            <td>Satellites; gutter splash</td>
-            <td>Is μ believable?</td>
-            <td>Seasonal μ plan; make-up budget</td>
-        </tr>
-        <tr>
-            <td>Head plate</td>
-            <td>Dried film; dust</td>
-            <td>Weak jet; contact marks</td>
-            <td>10× loupe inspection</td>
-            <td>Lint-free wet wipe; positive air</td>
-        </tr>
-        <tr style="background:#fff7ea;">
-            <td>Charge/deflect</td>
-            <td>Fouled geometry; static</td>
-            <td>Random deflection</td>
-            <td>Gutter centering</td>
-            <td>Grounding + ionizers; RH 40–60%</td>
-        </tr>
-        <tr>
-            <td>Controls/FW</td>
-            <td>Legacy firmware</td>
-            <td>Slow ready; retries</td>
-            <td>Version audit</td>
-            <td>Quarterly updates</td>
-        </tr>
-    </tbody>
-</table>
-
-
-<!-- =======================================================
-H2 — Fluids: viscosity & compatibility to curb nozzle clogging and startup failures
-======================================================= -->
-
-<h2 id="fluids">Fluids: viscosity &amp; compatibility to curb <em>nozzle clogging and startup failures</em></h2>
-
-<h3 id="viscosity-window">H3 — Viscosity window for <em>nozzle clogging and startup failures</em> prevention</h3>
-<p>CIJ inks operate in a tight μ window. Temperature dominates μ: warmer → thinner (satellites); colder → thicker (pump
-    strain, unstable breakup). Controllers meter make-up to pull μ on target, but manual flooding or wrong cleaning
-    over-dilutes reservoirs and triggers days of drift—classic precursors to <strong>nozzle clogging and startup
-        failures</strong>.</p>
-
-<p style="background:#fff7ea;padding:1rem;border-radius:.6rem;margin:1rem 0;"><strong>Indicative scaling
-        (planning):</strong> <code>μ(T) ≈ μ<sub>20 °C</sub>·e<sup>−β(T−20)</sup></code>, β≈0.03–0.05 °C⁻¹ for many
-    solvent systems. A +10 °C room rise can drop μ by ~26–39%. Pair seasonal μ plans with make-up budgets to suppress
-    <em>nozzle clogging and startup failures</em>.</p>
-
-<h4 id="mu-table">H4 — Control window &amp; acceptance for <em>nozzle clogging and startup failures</em></h4>
-<table style="width:100%;border-collapse:collapse;margin:.75rem 0;">
-    <thead>
-        <tr>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Parameter</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Target</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">If below/above</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Mitigation</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr style="background:#fff7ea;">
-            <td>μ (controller)</td>
-            <td>OEM nominal ± small %</td>
-            <td>Low → satellites; High → jet strain</td>
-            <td>Adjust make-up; stabilize T</td>
-        </tr>
-        <tr>
-            <td>Temperature</td>
-            <td>18–28 °C</td>
-            <td>Cold → μ↑; Hot → μ↓</td>
-            <td>HVAC, shields, door control</td>
-        </tr>
-        <tr style="background:#fff7ea;">
-            <td>Conductivity κ</td>
-            <td>OEM range</td>
-            <td>Out-of-range charge instability</td>
-            <td>Validate fluids; avoid mixing</td>
-        </tr>
-    </tbody>
-</table>
-
-<h3 id="makeup-planning">H3 — Make-up planning that you can defend (avoid <em>nozzle clogging and startup failures</em>)
-</h3>
-
-<!--ITB-START-->
-<!-- wp:html -->
-<pre><code class="itb-tool">
-{
-  "id": "itb-makeup-planner-v4",
-  "type": "calculator",
-  "title_en": "CIJ Make-Up Budget Planner",
-  "desc_en": "Estimate shift make-up (ml) by temp, duty, nozzle; tie to $/L. Better planning reduces nozzle clogging and startup failures.",
-  "theme": "amber",
-  "inputs": [
-    {"name":"tempC","label":"Ambient temperature","unit":"°C","type":"number","min":5,"max":45,"step":1},
-    {"name":"hours","label":"Runtime this shift","unit":"h","type":"number","min":1,"max":24,"step":1},
-    {"name":"nozzle","label":"Nozzle size","unit":"µm","type":"select","options":["40","60","75"]},
-    {"name":"duty","label":"Print duty cycle","unit":"%","type":"number","min":0,"max":100,"step":5},
-    {"name":"price","label":"Make-up price","unit":"$/L","type":"number","min":5,"max":100,"step":0.5,"default":18}
-  ],
-  "outputs": [
-    {"name":"mu_est","label":"Estimated make-up","unit":"ml/shift","precision":0},
-    {"name":"budget","label":"Budget","unit":"$","precision":2}
-  ],
-  "formula": "mu_est = k(nozzle)*hours*(1+0.05*(tempC-20))*(0.5+0.5*duty/100); budget = mu_est/1000*price;",
-  "disclaimer_en": "Fit k(nozzle) using OEM specs and your logs."
-}
-</code></pre>
-<!-- /wp:html -->
-<!--ITB-END-->
-
-<p>Need more rigorous nozzle/duty math? Open the cluster calculator: <a href="/makeup-consumption-calculator/"
-        aria-label="Make-Up Consumption: ml/Hour by Nozzle & Duty Cycle">Make-Up Consumption: ml/Hour by Nozzle &amp;
-        Duty Cycle</a>.</p>
-
-<h3 id="pigment-settling">H3 — Pigmented whites: settling &amp; agglomeration tied to <em>nozzle clogging and startup
-        failures</em></h3>
-<p>TiO<sub>2</sub> whites settle faster than dye systems. Stokes-style scaling captures the intuition:
-    <code>v ∝ (ρ<sub>p</sub>−ρ<sub>f</sub>)·r² / μ</code>. Warm, thin ink + long idle → faster settling → filter load →
-    tomorrow’s <strong>nozzle clogging and startup failures</strong>. Respect recirculation and clean stops; exercise
-    dormant loops after long weekends.</p>
-
-<h3 id="compatibility">H3 — Compatibility &amp; “look-alike” fluids (prevent <em>nozzle clogging and startup
-        failures</em>)</h3>
-<p style="background:#fff7ea;padding:1rem;border-radius:.6rem;margin:1rem 0;"><strong>Orange card — mixing
-        risks:</strong> Don’t mix OEM-A ink with OEM-B make-up without validation. Small cosolvent deltas change binder
-    solvency and κ, amplifying <em>nozzle clogging and startup failures</em>. Zone guns and stores by <em>family</em>,
-    not only color.</p>
-
-<h3 id="shelf-life">H3 — Shelf life, FIFO &amp; storage that avert <em>nozzle clogging and startup failures</em></h3>
-<p>Expired ink = binder aging + volatile loss = gummy precipitates. Once pumped, sludge taxes filters and pumps. Store
-    sealed at <strong>18–28 °C</strong>, <strong>40–60% RH</strong>, away from doors/solar gain; barcode lots and
-    enforce FIFO. Seasonal handling: <a href="/cij-ink-shelf-life-storage/"
-        aria-label="Ink Shelf Life, Storage & Temperature Control">Ink Shelf Life, Storage &amp; Temperature
-        Control</a>. For chemistry families shaping risk, see <a href="/cij-ink-families/"
-        aria-label="CIJ Ink Families: MEK vs Ethanol vs Dye-Pigment">CIJ Ink Families: MEK vs Ethanol vs
-        Dye-Pigment</a>.</p>
-
-
-<!-- =======================================================
-H2 — Environment: humidity, dust, static vs nozzle clogging and startup failures (expanded ×3+)
-======================================================= -->
-
-<h2 id="environment">Environment: humidity, dust, static vs <em>nozzle clogging and startup failures</em></h2>
-
-<h3 id="humidity">H3 — Humidity windows for <em>nozzle clogging and startup failures</em></h3>
-<p>Low RH (&lt;35%) accelerates meniscus drying and multiplies static on films; very high RH (&gt;70%) slows dry-down
-    and risks moisture ingress via gutter air. Keep a hygrometer next to each coder and record readings with your shift
-    checks.</p>
-
-<table style="width:100%;border-collapse:collapse;margin:1rem 0;">
-    <caption><strong>RH risk bands impacting <em>nozzle clogging and startup failures</em></strong></caption>
-    <thead>
-        <tr>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">RH band</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">CIJ risk</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">TIJ risk</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Primary action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr style="background:#fff7ea;">
-            <td>&lt;35%</td>
-            <td>Dry tip; static ↑</td>
-            <td>Cartridge dehydration</td>
-            <td>Humidify→40–50%; ionize films</td>
-        </tr>
-        <tr>
-            <td>40–60%</td>
-            <td>Optimal</td>
-            <td>Optimal</td>
-            <td>Monitor only</td>
-        </tr>
-        <tr style="background:#fff7ea;">
-            <td>&gt;70%</td>
-            <td>Slow dry; moisture path</td>
-            <td>Smear risk on coated board</td>
-            <td>Dehumidify; air knife</td>
-        </tr>
-    </tbody>
-</table>
-
-<!--ITB-START-->
-<!-- wp:html -->
-<pre><code class="itb-tool">
-{
-  "id": "itb-humidity-static-v5",
-  "type": "estimator",
-  "title_en": "Humidity–Static Risk Estimator",
-  "desc_en": "Score NCSF risk from RH, substrate, and line speed; output countermeasures.",
-  "theme": "slate",
-  "inputs": [
-    {"name":"rh","label":"Relative humidity","unit":"%","type":"number","min":10,"max":90,"step":1},
-    {"name":"substrate","label":"Substrate","unit":"—","type":"select","options":["PET","OPP film","Glass","Paperboard","Alu can"]},
-    {"name":"speed","label":"Line speed","unit":"m/min","type":"number","min":10,"max":500,"step":5}
-  ],
-  "outputs": [
-    {"name":"risk","label":"Static/clog risk level","unit":"—","precision":1},
-    {"name":"primary","label":"Primary countermeasure","unit":"—","precision":0}
-  ],
-  "logic": "Risk rises when RH<40%, film substrates, and speed>120. Map to Low/Med/High with grounding/ionizer/RH actions.",
-  "disclaimer_en": "Screening only; verify with a field meter."
-}
-</code></pre>
-<!-- /wp:html -->
-<!--ITB-END-->
-
-<h3 id="dust-ingress">H3 — Dust ingress &amp; the gutter gradient in <em>nozzle clogging and startup failures</em></h3>
-<p>CIJ gutters entrain air with droplets; in dusty halls (carton chop, flour, cement), particulates follow the gradient
-    into the head. Positive-pressure printheads or a gentle clean-air bleed flips that gradient and keeps debris out.
-</p>
-
-<p style="background:#fff7ea;padding:1rem 1.1rem;border-radius:.6rem;margin:1rem 0;"><strong>Air math
-        (planning):</strong> A laminar clean-air bleed of <code>Q ≈ 5–15 L/min</code> across the plate offsets ingress
-    <em>provided</em> the stream doesn’t disturb droplet flight. For seasonal dust surges, pre-empt with housekeeping
-    bursts and localized air curtains.</p>
-
-<h3 id="static">H3 — Static fields deflect droplets (driving <em>nozzle clogging and startup failures</em>)</h3>
-<p>Ground conveyors/coders to a common earth. On stubborn film lines add ionizing bars upstream; target neutral field at
-    nominal speed. Use a handheld meter to audit before/after effect.</p>
-
-<!--ITB-START-->
-<!-- wp:html -->
-<pre><code class="itb-tool">
-{
-  "id": "itb-esd-energy-v3",
-  "type": "calculator",
-  "title_en": "Static Energy Quick-Calc",
-  "desc_en": "Estimate stored ESD energy to gauge nuisance discharge near charge plates.",
-  "theme": "amber",
-  "inputs": [
-    {"name":"cap","label":"Estimated capacitance","unit":"pF","type":"number","min":10,"max":5000,"step":10},
-    {"name":"volt","label":"Static voltage","unit":"kV","type":"number","min":0,"max":30,"step":0.1}
-  ],
-  "outputs": [
-    {"name":"energy","label":"Stored energy","unit":"mJ","precision":2}
-  ],
-  "formula": "E = 0.5 * C * V^2 (C in Farads, V in Volts); convert to mJ.",
-  "disclaimer_en": "Use an ESD meter for real readings."
-}
-</code></pre>
-<!-- /wp:html -->
-<!--ITB-END-->
-
-
-<!-- =======================================================
-H2 — Operational discipline: startups, cleans, clean stops against nozzle clogging and startup failures
-======================================================= -->
-
-<h2 id="ops">Operational discipline: startups, cleans, clean stops against <em>nozzle clogging and startup failures</em>
-</h2>
-
-<h3 id="startups">H3 — Startups that prevent <em>nozzle clogging and startup failures</em></h3>
-<ol>
-    <li><strong>Pre-check (60–90 s):</strong> Visual plate, fluid levels, hose dryness, clamps seated; record RH/Temp.
-    </li>
-    <li><strong>Init via UI:</strong> let visco/prime routines complete; don’t bypass to “save time.”</li>
-    <li><strong>Acceptance before online:</strong> CIJ—jet centered in gutter; pattern ≥99% scan; TIJ—no missing bars at
-        300×300 dpi.</li>
-</ol>
-
-<!--ITB-START-->
-<!-- wp:html -->
-<pre><code class="itb-tool">
-{
-  "id": "itb-startup-timer-v2",
-  "type": "checker",
-  "title_en": "Startup Readiness Timer",
-  "desc_en": "Track CIJ ≤180 s, TIJ ≤30 s; flag late starts correlated with nozzle clogging and startup failures.",
-  "theme": "slate",
-  "inputs": [
-    {"name":"tech","label":"Technology","unit":"—","type":"select","options":["CIJ","TIJ"]},
-    {"name":"seconds","label":"Init seconds","unit":"s","type":"number","min":1,"max":600,"step":1}
-  ],
-  "outputs": [
-    {"name":"flag","label":"Status","unit":"—","precision":0}
-  ],
-  "logic": "CIJ OK if ≤180; TIJ OK if ≤30; else flag LateStart."
-}
-</code></pre>
-<!-- /wp:html -->
-<!--ITB-END-->
-
-<h3 id="cleaning">H3 — Cleaning is a reset, not a smear (reduce <em>nozzle clogging and startup failures</em>)</h3>
-<ul>
-    <li>Use OEM cleaner/make-up + lint-free wipes; motion is downward/outward.</li>
-    <li>Never blast compressed air into the return block; no dry wiping.</li>
-    <li>Avoid flooding while vacuum is active; don’t over-dilute the core loop.</li>
-</ul>
-
-<p style="background:#fff7ea;padding:1rem;border-radius:.6rem;margin:1rem 0;"><strong>Orange acceptance card:</strong>
-    “CIJ: stable breakup, gutter capture centered, no satellites @ 10×. TIJ: uniform bar field; no dropout &gt; 1 mm.”
-    Paste into SOP to suppress <em>nozzle clogging and startup failures</em>.</p>
-
-<h3 id="shutdown">H3 — Clean stops are non-negotiable for <em>nozzle clogging and startup failures</em></h3>
-<p><strong>Never hard-power a CIJ.</strong> Always invoke auto-flush to retract ink, solvent-flush nozzle/gutter, and
-    cap. TIJ must cap for breaks ≥20 min; uncapped overnight is the fastest path to morning <strong>nozzle clogging and
-        startup failures</strong>.</p>
-
-<!--ITB-START-->
-<!-- wp:html -->
-<pre><code class="itb-tool">
-{
-  "id": "itb-shutdown-compliance-v3",
-  "type": "checker",
-  "title_en": "Clean-Stop Compliance",
-  "desc_en": "Compute % of stops executed via auto-flush vs total stops.",
-  "theme": "amber",
-  "inputs": [
-    {"name":"stops","label":"Total stops","unit":"count","type":"number","min":0,"max":200,"step":1},
-    {"name":"cleanstops","label":"Auto-flush (clean) stops","unit":"count","type":"number","min":0,"max":200,"step":1}
-  ],
-  "outputs": [
-    {"name":"pct","label":"Compliance","unit":"%","precision":1},
-    {"name":"flag","label":"Status","unit":"—","precision":0}
-  ],
-  "logic": "Target ≥98%. Green if ≥98, yellow 95–98, red <95. Low compliance predicts next-shift NCSF."
-}
-</code></pre>
-<!-- /wp:html -->
-<!--ITB-END-->
-
-
-<!-- =======================================================
-H2 — Technology-specific playbooks (CIJ vs TIJ) to cut nozzle clogging and startup failures
-======================================================= -->
-
-<h2 id="tech-playbooks">Technology-specific playbooks (CIJ vs TIJ) to cut <em>nozzle clogging and startup failures</em>
-</h2>
-
-<h3 id="cij">H3 — CIJ: keep the loop healthy</h3>
-<ul>
-    <li><strong>Auto-flush always</strong>; skipping it hardens residues into tomorrow’s clogs.</li>
-    <li><strong>Gutter centering</strong> is the canary for charge/deflection drift—realign before going online.</li>
-    <li><strong>Filter/pressure trend</strong>: creeping pump % = loaded filters; change by hours, not alarms.</li>
-    <li><strong>Positive air</strong> kits on dusty lines to resist ingress and reduce <em>nozzle clogging and startup
-            failures</em>.</li>
-</ul>
-
-<h3 id="tij">H3 — TIJ: the cartridge is the printhead (avoid <em>nozzle clogging and startup failures</em>)</h3>
-<ul>
-    <li><strong>Cap discipline</strong>: dryness → crust → <em>nozzle clogging and startup failures</em>. Re-cap every
-        meaningful pause.</li>
-    <li><strong>Wicking wipes</strong> with the correct fluid (DI water for aqueous; approved solvent for solvent
-        systems).</li>
-    <li><strong>Swap vs nurse</strong>: don’t burn OEE trying to rescue a dying plate—swap, document, move on.</li>
-</ul>
-
-<p>After head/fluids are stable, isolate residual artifacts with the cluster checklist <a
-        href="/cij-print-quality-checklist/" aria-label="CIJ Print Quality Troubleshooting Checklist">CIJ Print Quality
-        Troubleshooting Checklist</a>.</p>
-
-
-<!-- =======================================================
-H2 — Weekly→Annual cadence: logging & parts to prevent nozzle clogging and startup failures
-======================================================= -->
-
-<h2 id="cadence">Weekly→Annual cadence: logging &amp; parts to prevent <em>nozzle clogging and startup failures</em>
-</h2>
-
-<table style="width:100%;border-collapse:collapse;margin:1rem 0;">
-    <caption><strong>Preventive cadence mapped to <em>nozzle clogging and startup failures</em></strong></caption>
-    <thead>
-        <tr>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Task</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">CIJ focus</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">TIJ focus</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Frequency</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Accept/Fail</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Notes</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr style="background:#fff7ea;">
-            <td>Test pattern</td>
-            <td>Jet/gutter; satellites</td>
-            <td>No missing bars</td>
-            <td>Daily</td>
-            <td>Pass before online</td>
-            <td>Record RH/Temp</td>
-        </tr>
-        <tr>
-            <td>Auto-flush shutdown</td>
-            <td>Mandatory</td>
-            <td>Cap if idle ≥20 min</td>
-            <td>Every stop</td>
-            <td>≥98% compliance</td>
-            <td>Weekly audit</td>
-        </tr>
-        <tr style="background:#fff7ea;">
-            <td>External wipe</td>
-            <td>Lint-free + OEM cleaner</td>
-            <td>Wicking wipe</td>
-            <td>End of shift</td>
-            <td>No residue/drag lines</td>
-            <td>Replace wipes weekly</td>
-        </tr>
-        <tr>
-            <td>Filter kits</td>
-            <td>Main/make-up/pump</td>
-            <td>—</td>
-            <td>Per hours (e.g., 5k) or annual</td>
-            <td>Pump% normalized</td>
-            <td>Stagger across coders</td>
-        </tr>
-        <tr style="background:#fff7ea;">
-            <td>Firmware</td>
-            <td>Latest stable</td>
-            <td>Latest stable</td>
-            <td>Quarterly</td>
-            <td>No known init bugs</td>
-            <td>Plan off-shift</td>
-        </tr>
-        <tr>
-            <td>ESD audit</td>
-            <td>Grounds/ionizers</td>
-            <td>Grounds/ionizers</td>
-            <td>Quarterly</td>
-            <td>Neutral field</td>
-            <td>Meter log</td>
-        </tr>
-    </tbody>
-</table>
-
-<!--ITB-START-->
-<!-- wp:html -->
-<pre><code class="itb-tool">
-{
-  "id": "itb-filter-life-v3",
-  "type": "estimator",
-  "title_en": "Filter Life & Pump Load Estimator",
-  "desc_en": "Relate pump % trend + hours to a filter-change window; prevent NCSF.",
-  "theme": "amber",
-  "inputs": [
-    {"name":"base","label":"Pump % @ new filter","unit":"%","type":"number","min":10,"max":80,"step":1},
-    {"name":"now","label":"Pump % now","unit":"%","type":"number","min":10,"max":100,"step":1},
-    {"name":"hours","label":"Hours since last change","unit":"h","type":"number","min":0,"max":10000,"step":10}
-  ],
-  "outputs": [
-    {"name":"load","label":"Relative filter load","unit":"%","precision":0},
-    {"name":"advice","label":"Advice","unit":"—","precision":0}
-  ],
-  "logic": "Load ≈ (now - base)/(100 - base). If >70%, schedule change before nozzle clogging and startup failures."
-}
-</code></pre>
-<!-- /wp:html -->
-<!--ITB-END-->
-
-
-<!-- =======================================================
-H2 — Safety & compliance: solvents, ESD, bonding/grounding for nozzle clogging and startup failures control
-======================================================= -->
-
-<h2 id="safety">Safety &amp; compliance for <em>nozzle clogging and startup failures</em> control</h2>
-
-<p>Quality and safety are coupled: solvent discipline and ESD control lower incidents and <em>nozzle clogging and
-        startup failures</em> together.</p>
-
-<ul>
-    <li><strong>Flammables:</strong> store/dispense per OSHA; bond &amp; ground containers; ventilate decant zones.</li>
-    <li><strong>ESD program (ANSI/ESD S20.20):</strong> equipment grounding, personnel grounding, ionization for
-        isolated conductors, periodic verification.</li>
-    <li><strong>SDS at point-of-use:</strong> train on PEL/TWA, first aid, spill response; segregate incompatible
-        wastes.</li>
-</ul>
-
-<p style="background:#fff7ea;padding:1rem;border-radius:.6rem;margin:1rem 0;"><strong>Static primer:</strong>
-    <code>Q = C·V</code>, <code>E = ½·C·V²</code>. Even small C at kV potentials yields nuisance discharges near charge
-    plates—degrading marks and nudging systems toward <em>nozzle clogging and startup failures</em>.</p>
-
-
-<!-- =======================================================
-H2 — KPIs & dashboards predicting nozzle clogging and startup failures (expanded)
-======================================================= -->
-
-<h2 id="kpis">KPIs &amp; dashboards predicting <em>nozzle clogging and startup failures</em></h2>
-
-<ul>
-    <li><strong>Clean-Stop %</strong> = auto-flush stops ÷ total stops (<em>target ≥98%</em>).</li>
-    <li><strong>First-Pass Test Pattern %</strong> (target ≥95%).</li>
-    <li><strong>Filter Interval Adherence</strong> (±10% of scheduled hours).</li>
-    <li><strong>Make-Up Spend Index</strong> (ml/h normalized to duty &amp; temp).</li>
-    <li><strong>Dust/Static Incidents</strong> per 10k packs—trend down with seasonal controls.</li>
-</ul>
-
-<!--ITB-START-->
-<!-- wp:html -->
-<pre><code class="itb-tool">
-{
-  "id": "itb-kpi-mini-v3",
-  "type": "calculator",
-  "title_en": "NCSF KPI Mini-Dashboard",
-  "desc_en": "Compute Clean-Stop %, First-Pass %, and a make-up drift index.",
-  "theme": "slate",
-  "inputs": [
-    {"name":"stops","label":"Total stops","unit":"count","type":"number","min":0,"max":200,"step":1},
-    {"name":"clean","label":"Auto-flush stops","unit":"count","type":"number","min":0,"max":200,"step":1},
-    {"name":"tests","label":"Total test patterns","unit":"count","type":"number","min":0,"max":200,"step":1},
-    {"name":"pass","label":"Pass on first try","unit":"count","type":"number","min":0,"max":200,"step":1},
-    {"name":"mu","label":"Make-up ml/h (norm)","unit":"ml/h","type":"number","min":0,"max":500,"step":1},
-    {"name":"mu_base","label":"Baseline ml/h","unit":"ml/h","type":"number","min":0,"max":500,"step":1}
-  ],
-  "outputs": [
-    {"name":"cs","label":"Clean-Stop %","unit":"%","precision":1},
-    {"name":"fp","label":"First-Pass %","unit":"%","precision":1},
-    {"name":"drift","label":"Make-Up Drift","unit":"%","precision":1}
-  ],
-  "formula": "cs=100*clean/max(stops,1); fp=100*pass/max(tests,1); drift=100*(mu-max(mu_base,1))/max(mu_base,1);",
-  "disclaimer_en": "Rising drift + falling Clean-Stop % predict nozzle clogging and startup failures."
-}
-</code></pre>
-<!-- /wp:html -->
-<!--ITB-END-->
-
-
-<!-- =======================================================
-H2 — Quick “what to do when…” specific to nozzle clogging and startup failures (expanded)
-======================================================= -->
-
-<h2 id="quick-guide">Quick “what to do when…” specific to <em>nozzle clogging and startup failures</em></h2>
-
-<h3 id="cij-wont-start">H3 — CIJ won’t reach Ready (avoid <em>nozzle clogging and startup failures</em>)</h3>
-<ol>
-    <li>Verify correct ink/make-up; confirm μ displays credibly; if pump % high, suspect filters.</li>
-    <li>Run OEM clean; inspect plate; re-align jet to gutter center.</li>
-    <li>Soft reboot via UI; if lag repeats, schedule firmware update.</li>
-</ol>
-
-<h3 id="tij-gapped">H3 — TIJ gaps after break (typical <em>nozzle clogging and startup failures</em>)</h3>
-<ol>
-    <li>Cap/uncap cycle; wicking wipe with correct fluid.</li>
-    <li>Purge routine; if no recovery in 2 tries, <strong>swap cartridge</strong>.</li>
-    <li>Audit RH; add a small humidifier if &lt;40%.</li>
-</ol>
-
-<h3 id="dust-storm">H3 — Dust-heavy day (preempt <em>nozzle clogging and startup failures</em>)</h3>
-<ul>
-    <li>Increase wipe frequency; shorten head exposure between runs.</li>
-    <li>Enable positive-pressure or a clean-air bleed; relocate print zone away from plume.</li>
-    <li>Add an ionizer if static compounds dust attraction.</li>
-</ul>
-
-
-<!-- =======================================================
-H2 — Root cause matrix (rank & resolve) for nozzle clogging and startup failures
-======================================================= -->
-
-<h2 id="rcm">Root cause matrix (rank &amp; resolve) for <em>nozzle clogging and startup failures</em></h2>
-
-<table style="width:100%;border-collapse:collapse;margin:1rem 0;">
-    <caption><strong>RCM — link symptoms to fixes that reduce <em>nozzle clogging and startup failures</em></strong>
-    </caption>
-    <thead>
-        <tr>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Symptom</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Likely cause</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Verify</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Immediate fix</th>
-            <th style="text-align:left;border-bottom:1px solid #ddd;">Preventive</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr style="background:#fff7ea;">
-            <td>Satellites / overspray</td>
-            <td>μ low; hot ambient</td>
-            <td>Visco reading</td>
-            <td>Adjust make-up; cool zone</td>
-            <td>Seasonal μ planning</td>
-        </tr>
-        <tr>
-            <td>Random deflection</td>
-            <td>Static; fouled plates</td>
-            <td>Field meter; visual</td>
-            <td>Ionize; clean plates</td>
-            <td>Grounding; RH 40–60%</td>
-        </tr>
-        <tr style="background:#fff7ea;">
-            <td>Morning hard clog</td>
-            <td>Skipped auto-flush</td>
-            <td>Stop logs</td>
-            <td>Deep clean</td>
-            <td>≥98% clean-stop KPI</td>
-        </tr>
-        <tr>
-            <td>Pump % creeping</td>
-            <td>Filters loading</td>
-            <td>Trend chart</td>
-            <td>Replace kit</td>
-            <td>Change by hours</td>
-        </tr>
-    </tbody>
-</table>
-
-
-<!-- =======================================================
-H2 — Related reading on your site (distributed natural links)
-======================================================= -->
-
-<h2 id="internal-links">Related reading on your site</h2>
-
-<p>When make-up math and nozzle sizing steer both quality and cost, use <a href="/makeup-consumption-calculator/"
-        aria-label="Make-Up Consumption Calculator">Make-Up Consumption: ml/Hour by Nozzle &amp; Duty Cycle</a>. For
-    chemistry families and behaviors that influence <em>nozzle clogging and startup failures</em>, see <a
-        href="/cij-ink-families/" aria-label="CIJ Ink Families">CIJ Ink Families: MEK vs Ethanol vs Dye-Pigment</a>.
-    After the head is stable, separate residual artifacts using <a href="/cij-print-quality-checklist/"
-        aria-label="CIJ Print Quality Troubleshooting Checklist">CIJ Print Quality Troubleshooting Checklist</a>. To
-    avoid morning clogs through storage/rotation discipline, revisit <a href="/cij-ink-shelf-life-storage/"
-        aria-label="Ink Shelf Life, Storage & Temperature Control">Ink Shelf Life, Storage &amp; Temperature
-        Control</a>. And keep the pillar handy for system decisions: <a href="/coding-marking-consumables/"
-        aria-label="Coding & Marking Consumables pillar">Coding &amp; Marking Consumables</a>.</p>
-
-
-<!-- =======================================================
-H2 — Glossary focused on nozzle clogging and startup failures
-======================================================= -->
-
-<h2 id="glossary">Glossary focused on <em>nozzle clogging and startup failures</em></h2>
-
-<ul>
-    <li><strong>Auto-flush / clean stop:</strong> OEM routine retracting ink, flushing nozzle/gutter, and parking
-        sealed; skipping is a top root of <em>nozzle clogging and startup failures</em>.</li>
-    <li><strong>Gutter centering:</strong> unprinted jet lands centrally in the return gutter; drift implies
-        charge/deflection issues.</li>
-    <li><strong>Wicking wipe:</strong> TIJ cleaning motion pulling debris away rather than scrubbing across nozzles.
-    </li>
-    <li><strong>Positive-pressure head:</strong> clean-air bleed across the plate to resist particle ingress near the
-        orifice.</li>
-</ul>
-
-
-<!-- =======================================================
-H2 — SEO utility: density checker for "nozzle clogging and startup failures"
-======================================================= -->
-
-<h2 id="seo-tool">SEO utility: density checker for “<em>nozzle clogging and startup failures</em>”</h2>
-
-<!--ITB-START-->
-<!-- wp:html -->
-<pre><code class="itb-tool">
-{
-  "id": "itb-seo-density-v1",
-  "type": "checker",
-  "title_en": "Focus Keyword Density Checker",
-  "desc_en": "Counts 'nozzle clogging and startup failures' and estimates % vs total words in this page.",
-  "theme": "amber",
-  "inputs": [
-    {"name":"total_words","label":"Estimated total words on page","unit":"words","type":"number","min":500,"max":20000,"step":50},
-    {"name":"occurs","label":"Occurrences of the focus keyword","unit":"count","type":"number","min":0,"max":500,"step":1}
-  ],
-  "outputs": [
-    {"name":"density","label":"Keyword density","unit":"%","precision":2},
-    {"name":"status","label":"Target check (≈1%)","unit":"—","precision":0}
-  ],
-  "logic": "density = 100*occurs/max(total_words,1); status = (density>=0.7 && density<=1.3)?'OK (~1%)':'Adjust';",
-  "disclaimer_en": "This is a heuristic; Rank Math will calculate from rendered HTML."
-}
-</code></pre>
-<!-- /wp:html -->
-<!--ITB-END-->
-
-
-<!-- =======================================================
-References (stable; PDFs favored)
-======================================================= -->
-
-<h2 id="references">References</h2>
-<ul>
-    <li><a
-            href="https://www.videojet.com/wp-content/uploads/dam/OEM/CIJ/1580/operator-manuals/463170-21-aa-videojet-1580-operator-manual-en.pdf">Videojet
-            — 1580 Operator Manual (printhead cleaning &amp; auto-flush)</a></li>
-    <li><a href="https://global.videojet.com/wp-content/uploads/dam/pdf/MEA/BR/br-1040-mea.pdf">Videojet — 1040 CIJ
-            Brochure (auto-flushing overview)</a></li>
-    <li><a
-            href="https://www.videojet.com/wp-content/uploads/dam/pdf/NA%20-%20English/361069-01_Excel_2000_Service_Manual_Cleaning_the_Printhead.pdf">Videojet
-            — Excel 2000 Service Manual (printhead cleaning excerpt)</a></li>
-
-    <li><a
-            href="https://www.domino-printing.com/resources/English/Whitepapers/Domino-Craft-Brewers-Guide-to-Coding.pdf">Domino
-            Printing — Coding Technology Guide (CIJ/TIJ fundamentals)</a></li>
-    <li><a href="https://www.artisantg.com/info/Domino_A_Series_Manual_202332910340.pdf">Domino — A-Series Manual
-            (service &amp; positive air)</a></li>
-
-    <li><a
-            href="https://d2bi2rpyabw4cc.cloudfront.net/wp-content/uploads/SPS-SC019908042017-TIJ-2.5-Aqueous-Cartridge-Cleaning-and-Maintenance.pdf">HP
-            — TIJ 2.5 Aqueous Cartridge Cleaning &amp; Maintenance</a></li>
-    <li><a href="https://h20195.www2.hp.com/v2/GetDocument.aspx?docname=4AA6-6482ENW">HP — TIJ 2.5 Technology Family
-            Overview</a></li>
-
-    <li><a href="https://www.esda.org/assets/Documents/Fundamentals-of-ESD-Part-2-Principles-of-ESD-Control.pdf">ESD
-            Association — Principles of ESD Control</a></li>
-    <li><a href="https://www.esda.org/assets/News/Update-to-ANSI-ESD-S2020-2014-FINAL.pdf">ESD Association — Updates to
-            ANSI/ESD S20.20</a></li>
-
-    <li><a href="https://www.osha.gov/sites/default/files/training-library_FlammableLessonPlan.pdf">OSHA — Flammable
-            Liquids: Bonding &amp; Grounding</a></li>
-    <li><a href="https://ehs.psu.edu/sites/ehs/files/osha_flammables-1_1.pdf">Penn State EHS — Flammable &amp;
-            Combustible Liquids</a></li>
-    <li><a href="https://ehs.stanford.edu/wp-content/uploads/24-119_Grounding_Bonding.pdf">Stanford EHS — Bonding &amp;
-            Grounding (primer)</a></li>
-
-    <li><a href="https://www.cdc.gov/niosh/npg/npgd0069.html">NIOSH — Pocket Guide: 2-Butanone (MEK)</a></li>
-    <li><a href="https://www.epa.gov/sites/default/files/2016-09/documents/methyl-ethyl-ketone.pdf">U.S. EPA — Methyl
-            Ethyl Ketone: Toxicological Profile</a></li>
-</ul>
-
-
-
-
-<!-- =======================================================
-End of cluster page
-======================================================= -->
+<!--
+Cluster Page • iBottling.com
+H1/Slug are locked from your inputs. Paste into Gutenberg “Code editor”.
+No external scripts. ITBs are plain JSON wrapped in <!-- wp:html --> for hydration.
+
+-->
+
+<div id="cluster-makeup-consumption" class="ib-section">
+
+    <h1>Make-Up Consumption: ml/Hour by Nozzle &amp; Duty Cycle <span
+            style="font-size:0.5em; color:#999; font-weight:normal;">(v5.2 Reactive)</span></h1>
+
+    <p><strong>Make-up consumption</strong> in CIJ systems is the anchor metric that production, maintenance, and HSE
+        teams monitor to keep costs stable and print quality predictable. In practice, your hourly solvent usage is a
+        sum of two components: (1) <em>active ejection</em> through the nozzle during printing, purging, and cleaning;
+        and (2) <em>passive evaporation</em> from the ink circuit while the printer maintains viscosity. This page
+        translates nozzle physics and duty-cycle control into a practical, <em>ml/hour</em> calculator you can trust on
+        the floor—plus realistic ranges for ethanol-, MEK-, and acetone-based make-up.</p>
+
+    <p>Before we dive into formulas, a quick orientation: CIJ sits inside your site-wide consumables plan alongside TIJ,
+        TTO, and laser. If you need the bigger picture—inks, make-up, ribbons, beam time—bookmark the pillar page <a
+            href="/coding-marking-consumables/" aria-label="Coding & Marking Consumables pillar">Coding &amp; Marking
+            Consumables (CIJ/TIJ/TTO/Laser)</a> and come back here when you’re ready to quantify solvent cost per hour
+        or per SKU run.</p>
+
+    <hr />
+
+    <h2 id="why-this-metric-matters">Why “ml/hour” matters more than anecdotal “one bottle a shift”</h2>
+    <p>“One bottle a shift” sounds tidy, but it ignores shift length, standby time, ambient temperature, and purge
+        habits. By converting everything into an hourly rate, you can: (a) forecast procurement with far less variance,
+        (b) benchmark lines against each other independent of OEE, (c) set alert thresholds in the printer HMI/SCADA,
+        and (d) negotiate better with suppliers using data that maps to physics rather than folklore.</p>
+
+    <ul>
+        <li><strong>Comparable across SKUs:</strong> Normalize by duty cycle to compare a sparse date code versus dense
+            alphanumerics.</li>
+        <li><strong>Actionable:</strong> Tie deviations to specific levers—pressure, nozzle wear, PWM settings, cabinet
+            temperature, and purge routines.</li>
+        <li><strong>Auditable:</strong> The calculation path is explainable (no black box). It uses standard orifice
+            flow and a duty-cycle average.</li>
+    </ul>
+
+    <p>If you’re also choosing solvents or switching families (MEK vs ethanol vs acetone vs dye/pigment blends),
+        cross-check compatibility, dry time, and safety in <a href="/cij-ink-families/"
+            aria-label="CIJ Ink Families cluster">CIJ Ink Families: MEK vs Ethanol vs Dye-Pigment</a> after you finish
+        the math here.</p>
+
+    <h2 id="two-part-model">The two-part model: active ejection + passive evaporation</h2>
+    <p>Think of make-up consumption as a dual engine:</p>
+    <ol>
+        <li><strong>Active ejection (Q<sub>active</sub>):</strong> solvent pushed through the nozzle when you print,
+            purge, or clean. It follows the orifice flow equation corrected by a discharge coefficient
+            (<em>C<sub>d</sub></em>) and averaged by duty cycle.</li>
+        <li><strong>Passive evaporation (Q<sub>passive</sub>):</strong> solvent lost as vapor while the printer
+            regulates viscosity. Driven mostly by temperature, exposed surface area, airflow, and solvent volatility.
+        </li>
+    </ol>
+    <p><strong>Total make-up (ml/h) = Q<sub>active</sub> + Q<sub>passive</sub>.</strong> We’ll compute both and then
+        combine them into a realistic hourly band for your line.</p>
+
+    <h2 id="nozzle-physics">Nozzle physics you actually need (without the fog)</h2>
+    <p>Instantaneous flow through a nozzle or orifice plate is well-described by the standard orifice equation:</p>
+    <p><code>Q_inst = C_d · A · sqrt( 2 · ΔP / ρ )</code></p>
+    <p>Where <em>C<sub>d</sub></em> = discharge coefficient (dimensionless), <em>A</em> = orifice area (m²), <em>ΔP</em>
+        = pressure differential (Pa), and <em>ρ</em> = fluid density (kg/m³). CIJ make-up behaves as a low-viscosity
+        solvent; for small orifices and the typical CIJ pressure regime, this model—empirically corrected by
+        <em>C<sub>d</sub></em>—is robust and widely used in engineering practice.
+    </p>
+
+    <h3 id="discharge-coefficient">About the discharge coefficient (C<sub>d</sub>)</h3>
+    <p><em>C<sub>d</sub></em> condenses real-world losses (vena contracta, friction, turbulence) into a single
+        multiplier. It depends on geometry and Reynolds number. In practice:</p>
+    <table>
+        <caption>Typical C<sub>d</sub> ranges by nozzle geometry (indicative)</caption>
+        <thead>
+            <tr>
+                <th>Nozzle geometry</th>
+                <th>Typical C<sub>d</sub> range</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Sharp-edged hole (thin plate)</td>
+                <td>0.60–0.65</td>
+                <td>Strong vena contracta</td>
+            </tr>
+            <tr>
+                <td>Short tube, sharp inlet</td>
+                <td>0.70–0.80</td>
+                <td>Some flow guidance</td>
+            </tr>
+            <tr>
+                <td>Smoothly rounded inlet</td>
+                <td>0.90–0.98</td>
+                <td>Low separation, high efficiency</td>
+            </tr>
+            <tr>
+                <td>Convergent (7°–12°)</td>
+                <td>0.95–1.05</td>
+                <td>Occasional recovery &gt;1.0 reported</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>CIJ nozzles are precision parts and their effective <em>C<sub>d</sub></em> shifts with fouling, partial clots, or
+        wear. If your hourly usage creeps up at unchanged pressure/duty, suspect a <em>C<sub>d</sub></em> drift from
+        contamination or erosion. For preventive practices that stabilize <em>C<sub>d</sub></em>, see <a
+            href="/cij-nozzle-clogging-prevent/" aria-label="Nozzle Clogging cluster">Nozzle Clogging &amp; Startup
+            Failures: Preventive Playbook</a>.</p>
+
+    <h3 id="density-and-area">Density and area: simple but sensitive</h3>
+    <ul>
+        <li><strong>Area (A):</strong> for a circular orifice of diameter <em>d</em>, use <em>A = π(d²/4)</em>. A 60 µm
+            nozzle (0.00006 m) has <code>A ≈ 2.827e-9 m²</code>.</li>
+        <li><strong>Density (ρ):</strong> ethanol ≈ 789 kg/m³ at 20 °C; MEK ≈ 805 kg/m³; acetone ≈ 784 kg/m³. Heavier
+            fluids reduce <em>Q</em> at a given pressure; lighter fluids increase it.</li>
+    </ul>
+
+    <h3 id="from-instant-to-hour">From instantaneous to hourly: the duty-cycle average</h3>
+    <p>CIJ doesn’t flow continuously at the nozzle when you’re coding sparse content; rather, the
+        solenoid/deflection/charge system “works” in bursts. If the printer is “on” for a fraction of each cycle, your
+        average flow is:</p>
+    <p><code>Q_active = Q_inst · DutyCycle</code></p>
+    <p>Duty cycle is the “on” time divided by the total cycle time, often manipulated via PWM. Convert to ml/h using
+        <em>3600 s/h</em> and <em>10<sup>6</sup> ml/m³</em>.
+    </p>
+
+    <h3 id="worked-example">Worked example: 60 µm, 2 bar, ethanol, C<sub>d</sub>=0.97, duty = 15%</h3>
+    <p>Let ΔP = 2 bar (2×10<sup>5</sup> Pa), ρ = 789 kg/m³, A = 2.827e-9 m². Then:</p>
+    <p><code>Q_inst ≈ 0.97 · 2.827e-9 · sqrt( 2·2e5 / 789 ) ≈ 6.18e-8 m³/s</code></p>
+    <p><code>Q_active ≈ 6.18e-8 · 0.15 = 9.27e-9 m³/s</code> → <code>~33.4 ml/h</code>.</p>
+
+
+
+    <h2 id="duty-cycle-and-pwm">Duty cycle &amp; PWM: the clean lever for average flow</h2>
+    <p>PWM (pulse-width modulation) lets you change average flow without chasing pump pressure. It’s responsive,
+        digital, and repeatable. Keep these realities in mind:</p>
+    <ul>
+        <li><strong>Response time:</strong> at very high PWM frequencies the valve may not fully open; your effective
+            <em>Q_inst</em> is lower than theory. Validate with a capture test.
+        </li>
+        <li><strong>Print quality trade-off:</strong> extreme PWM patterns can alter drop charge/deflection stability;
+            always pair flow changes with a quick code-legibility audit.</li>
+        <li><strong>Energy &amp; wear:</strong> constant pressure + PWM often uses simpler hardware and can reduce
+            mechanical stress compared with frequent pressure modulation.</li>
+    </ul>
+
+    <h3 id="pwm-acceptance">Acceptance criteria for a good PWM setup</h3>
+    <ol>
+        <li>At three duty settings (e.g., 10%, 30%, 50%), measured ml/h tracks linearly within ±7% of calculation.</li>
+        <li>Code quality (contrast, edge raggedness, overspray) remains in spec across the same points.</li>
+        <li>Start/stop stability: first 30 s after resume doesn’t overshoot more than 10% of steady state.</li>
+    </ol>
+    <p>Use your plant’s print QC routine here. For visual failure modes and fast fixes, reference <a
+            href="/cij-print-quality-checklist/" aria-label="CIJ Print Quality Troubleshooting Checklist">CIJ Print
+            Quality Troubleshooting Checklist</a> when PWM changes ripple into character defects.</p>
+
+    <!-- Phase 10 Tool (Relocated): Active Make-Up Consumption -->
+    <div class="oz-section" style="margin: 20px 0;">
+        <div class="oz-calc-container" data-itb-calculator="makeup-consumption-calculator-active-1"
+            style="background: #fffbeb; border: 1px solid #d97706; padding: 15px; border-radius: 8px;">
+            <h3 style="color: #b45309; margin-top: 0;">Active Make-Up Consumption (ml/hour)</h3>
+            <p style="font-size: 0.9em; color: #666;">Compute hourly solvent ejection from nozzle physics and
+                duty cycle.</p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <div>
+                    <label style="display:block; font-weight:bold; font-size:0.85em;">Orifice diameter (µm)</label>
+                    <input type="number" data-var="d_um" value="60" min="40" max="100" step="10"
+                        style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div>
+                    <label style="display:block; font-weight:bold; font-size:0.85em;">Pressure differential
+                        (bar)</label>
+                    <input type="number" data-var="deltaP_bar" value="2.8" min="2" max="4" step="0.1"
+                        style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div>
+                    <label style="display:block; font-weight:bold; font-size:0.85em;">Fluid density (kg/m³)</label>
+                    <input type="number" data-var="rho" value="789" min="800" max="1000" step="10"
+                        style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div>
+                    <label style="display:block; font-weight:bold; font-size:0.85em;">Duty cycle (%)</label>
+                    <input type="number" data-var="duty" value="15" min="5" max="100" step="5"
+                        style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display:block; font-weight:bold; font-size:0.85em;">Discharge coefficient</label>
+                <input type="number" data-var="Cd" value="0.97" min="0.6" max="0.99" step="0.01"
+                    style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+
+            <button onclick="window.ozExecuteCalc(this)"
+                style="display:none !important; background: #d97706; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;">Calculate
+                Flow</button>
+
+            <div class="itb-outputs"
+                style="display: none; margin-top: 15px; background: #fff; border: 1px solid #d97706; padding: 10px; border-radius: 4px;">
+                <div class="itb-output-group">
+                    <span>Instant Flow (Theoretical 100%):</span>
+                    <strong data-itb-output="q_inst_mlh">-</strong>
+                </div>
+                <div class="itb-output-group">
+                    <span>Active Flow (Actual):</span>
+                    <strong data-itb-output="q_active_mlh" style="color: #d97706;">-</strong>
+                </div>
+                <div class="itb-output-group"
+                    style="border-top: 1px dashed #ccc; padding-top: 5px; margin-top: 5px; font-size: 0.85em; color: #666;">
+                    <span data-itb-output="note"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 id="passive-evaporation">Passive evaporation: the quiet, continuous draw on your bottle</h2>
+    <p>Even when the nozzle is idle, make-up is consumed to restore solvent lost to evaporation from the ink reservoir
+        and circuit. Volatility is the feature (fast dry on the part) and the cost (constant loss to air). Four factors
+        dominate:</p>
+    <ol>
+        <li><strong>Temperature:</strong> higher cabinet/ambient temperature raises solvent vapor pressure—evaporation
+            climbs sharply.</li>
+        <li><strong>Exposed surface area:</strong> larger liquid–air interface drives loss. Lids, baffles, and
+            well-sealed circuits matter.</li>
+        <li><strong>Air exchange:</strong> fans and drafts carry vapor away, maintaining the gradient that sustains
+            evaporation.</li>
+        <li><strong>Solvent type:</strong> MEK typically evaporates faster than ethanol at the same conditions; acetone
+            is faster still.</li>
+    </ol>
+
+    <h3 id="quick-rules">Quick rules of thumb (use to sanity-check your logs)</h3>
+    <ul>
+        <li>For an ethanol system, <em>Q<sub>passive</sub></em> commonly sits around <strong>4–12 ml/hour</strong> at
+            20–25 °C with modest air movement.</li>
+        <li>MEK systems often run higher, <strong>6–18 ml/hour</strong>, and are more temperature-sensitive.</li>
+        <li>Open doors, hot enclosures, or frequent purges can double those baselines.</li>
+    </ul>
+
+    <h3 id="evap-estimator">A simple estimator for Q<sub>passive</sub> (for scheduling and alerts)</h3>
+    <p>This tool scales baseline losses by temperature, approximate air exchange, surface area, and solvent family. It’s
+        not a vapor-diffusion solver; it’s a practical scheduler for when to expect top-ups and when to ring an alert if
+        consumption deviates too far from norms.</p>
+
+    <!-- Phase 5 Tool: Make-Up Planner -->
+    <div class="oz-section" style="margin: 20px 0;">
+        <div class="oz-calc-container" data-itb-calculator="itb-makeup-planner-v4"
+            style="background:#f0f9ff; border:1px solid #0ea5e9; padding:15px; border-radius:8px;">
+            <h3 style="color:#0369a1;margin-top:0;font-size:1.1em;">Planning Tool: Est. Passive Consumption</h3>
+            <p style="font-size:0.9em; margin-bottom:10px;">Estimate bottle usage based on shift hours and temperature.
+            </p>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+                <div>
+                    <label style="font-size:0.8em; font-weight:bold;">Avg Temp (°C)</label>
+                    <input type="number" data-var="tempC" value="22" min="10" max="45"
+                        style="width:100%; padding:5px; border:1px solid #ccc; border-radius:4px;">
+                </div>
+                <div>
+                    <label style="font-size:0.8em; font-weight:bold;">Shift Hours</label>
+                    <input type="number" data-var="hours" value="8" min="1" max="168"
+                        style="width:100%; padding:5px; border:1px solid #ccc; border-radius:4px;">
+                </div>
+                <div>
+                    <label style="font-size:0.8em; font-weight:bold;">Nozzle Size</label>
+                    <select data-var="nozzle"
+                        style="width:100%; padding:5px; border:1px solid #ccc; border-radius:4px;">
+                        <option value="50">40-55 µm</option>
+                        <option value="60" selected>60-65 µm</option>
+                        <option value="75">70-75 µm</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:0.8em; font-weight:bold;">Make-Up Cost ($)</label>
+                    <input type="number" data-var="price" value="18"
+                        style="width:100%; padding:5px; border:1px solid #ccc; border-radius:4px;">
+                </div>
+                <div style="display:none;">
+                    <input type="number" data-var="duty" value="10"> <!-- Hidden default -->
+                </div>
+            </div>
+
+            <button onclick="window.ozExecuteCalc(this)" style="display:none !important;">Calculate</button>
+
+            <div class="itb-outputs"
+                style="display:none; background:white; padding:10px; border-radius:4px; border:1px solid #bae6fd;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <span>Est. Consumption:</span>
+                    <strong data-itb-output="mu_est" style="color:#0284c7;">-</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Est. Cost:</span>
+                    <strong data-itb-output="budget">-</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <h2 id="bring-it-together">Putting it together: total ml/hour bands you can plan around</h2>
+    <p>Let’s combine active and passive components for a typical small-character CIJ:</p>
+    <ul>
+        <li><strong>Light coding (date only), ethanol, 60 µm, 2 bar, duty 5–10%:</strong> Q<sub>active</sub> ≈ 10–25
+            ml/h; Q<sub>passive</sub> ≈ 4–12 ml/h; <strong>Total ≈ 14–37 ml/h</strong>.</li>
+        <li><strong>Dense coding (batch + time + logo), ethanol, duty 15–25%:</strong> Q<sub>active</sub> ≈ 30–60 ml/h;
+            Q<sub>passive</sub> ≈ 6–12 ml/h; <strong>Total ≈ 36–72 ml/h</strong>.</li>
+        <li><strong>MEK environments 25–35 °C:</strong> Q<sub>passive</sub> rises; expect <strong>+20–60%</strong> vs
+            ethanol numbers if airflow is not mitigated.</li>
+    </ul>
+
+    <h3 id="acceptance-bands">Acceptance bands and alerting</h3>
+    <p>For a given SKU and speed, log your last 5 stable runs and compute the mean and standard deviation of total ml/h.
+        Set HMI/SCADA alerts at <em>mean ± 2σ</em>. A spike above the band flags leaks, doors left open, clogged
+        filters, or drift in <em>C<sub>d</sub></em> (from nozzle fouling). A dip flags a failed make-up pump or
+        mis-scaled duty cycle.</p>
+
+    <h2 id="bench-method">30-minute bench method: verify your numbers today</h2>
+    <ol>
+        <li>Stabilize the printer at target ΔP and duty cycle (simulate the SKU if needed).</li>
+        <li>Record bottle mass before/after 30 minutes (±0.1 g scale). Correct for any purge.</li>
+        <li>Convert g→ml using the solvent density (e.g., ethanol ≈ 0.789 g/ml).</li>
+        <li>Double the 30-minute result to get ml/h and compare to calculated
+            <em>Q<sub>active</sub>+Q<sub>passive</sub></em>.
+        </li>
+    </ol>
+    <p>This half-hour check is often enough to catch a silently rising evaporation load or an inadvertently aggressive
+        purge routine.</p>
+
+    <h2 id="solvent-choice">Solvent choice and storage habits shape consumption</h2>
+    <p>Solvent families differ in density, vapor pressure, and viscosity-versus-temperature behavior. That translates
+        into different active flow (through ρ) and different passive loss (through volatility).</p>
+    <table>
+        <caption>Indicative properties at ~20 °C (for planning)</caption>
+        <thead>
+            <tr>
+                <th>Solvent</th>
+                <th>Density (kg/m³)</th>
+                <th>Volatility (qual.)</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Ethanol</td>
+                <td>~789</td>
+                <td>Medium</td>
+                <td>Common in food, lower odor</td>
+            </tr>
+            <tr>
+                <td>MEK (Butanone)</td>
+                <td>~805</td>
+                <td>High</td>
+                <td>Fast dry; flammable; higher passive loss</td>
+            </tr>
+            <tr>
+                <td>Acetone</td>
+                <td>~784</td>
+                <td>Very high</td>
+                <td>Very fast dry; aggressive</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>To compare full pros/cons (dry time, adhesion synergies with ink families, EHS handling), see the cluster <a
+            href="/cij-ink-families/" aria-label="CIJ Ink Families link">CIJ Ink Families: MEK vs Ethanol vs
+            Dye-Pigment</a> you opened earlier.</p>
+
+    <h2 id="pressure-and-nozzle">Pressure, nozzle, and health of the ink circuit</h2>
+    <p>Three levers dominate <em>Q<sub>active</sub></em> variance at fixed duty cycle: ΔP, nozzle diameter, and
+        <em>C<sub>d</sub></em> (which is sensitive to cleanliness and wear). A 10 µm change in diameter is
+        non-trivial—area scales with <em>d²</em>.
+    </p>
+    <ul>
+        <li><strong>Nozzle cleanliness:</strong> schedule preventive cleaning; keep start/stop purges consistent and
+            minimal.</li>
+        <li><strong>Filter integrity:</strong> clogged filters distort pressure and ripple into spray stability and
+            consumption.</li>
+        <li><strong>Seal leaks:</strong> any air ingress increases evaporation; dye halos around fittings are clues.
+        </li>
+    </ul>
+    <p>For deeper maintenance practices across startup/shutdown and long stops, cross-reference <a
+            href="/cij-nozzle-clogging-prevent/" aria-label="Nozzle Clogging cluster link">Nozzle Clogging &amp; Startup
+            Failures: Preventive Playbook</a>.</p>
+
+    <h2 id="temperature-and-storage">Temperature, enclosure, and storage discipline</h2>
+    <p>Every degree over ~20 °C amplifies evaporation. Simple steps help:</p>
+    <ul>
+        <li>Ensure fans blow across heat sinks, not across reservoir openings.</li>
+        <li>Keep cabinet doors latched; add a “door ajar” micro-switch alarm if operators frequent the panel.</li>
+        <li>Use baffles/lids to shrink the exposed surface area of the ink reservoir.</li>
+        <li>Relocate makeup bottle away from hot drives; shield from direct sun or HVAC discharge.</li>
+    </ul>
+    <p>Storage and thermal control are also crucial for ink stability and consistent viscosity management. For practical
+        limits and good-practice ranges, see <a href="/cij-ink-shelf-life-storage/"
+            aria-label="Ink Shelf Life cluster link">Ink Shelf Life, Storage &amp; Temperature Control</a>.</p>
+
+    <h2 id="purge-policy">Purge policy: an invisible line-item in your hourly consumption</h2>
+    <p>Purge volumes can dwarf passive evaporation if used as a catch-all fix. Institute a purge policy:</p>
+    <ol>
+        <li>Define when purges are allowed (e.g., after 30 min idle, after filter swap).</li>
+        <li>Set a purge volume cap per shift; track it in SCADA.</li>
+        <li>Investigate repeated purges as a symptom (nozzle wear, ink contamination, wrong pressure).</li>
+    </ol>
+
+    <h2 id="safety-and-compliance">Safety and compliance notes that affect “real” consumption</h2>
+    <p>Flammability class, ventilation, and labeling rules often drive enclosure airflow and cabinet layout. Those
+        constraints, in turn, change evaporation. When you tighten safety, you often lower make-up usage too:</p>
+    <ul>
+        <li>Ground and bond containers; eliminate static discharge points.</li>
+        <li>Keep lids tight; choose fittings that don’t weep under vibration.</li>
+        <li>Train on SDS for the exact make-up SKU in use (MEK, ethanol, acetone—each has distinct exposure and ignition
+            profiles).</li>
+    </ul>
+
+    <!-- Phase 7 Tool: SDS Validator -->
+    <div class="oz-section" style="margin: 20px 0;">
+        <div class="oz-calc-container" data-itb-calculator="sds-completeness-validator-transport-focus"
+            style="background:#fff7ed; border:1px solid #c2410c; padding:15px; border-radius:8px;">
+            <h3 style="color:#9a3412;margin-top:0;font-size:1.1em;">Safety Tool: SDS Transport Check</h3>
+            <p style="font-size:0.9em; margin-bottom:10px;">Quickly validate SDS integrity for air shipments.</p>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+                <div>
+                    <label style="font-size:0.8em; font-weight:bold;">UN Number</label>
+                    <input type="text" data-var="un" placeholder="UN 1210"
+                        style="width:100%; padding:5px; border:1px solid #ccc; border-radius:4px;">
+                </div>
+                <div>
+                    <label style="font-size:0.8em; font-weight:bold;">PSN</label>
+                    <input type="text" data-var="psn" placeholder="Printing Ink"
+                        style="width:100%; padding:5px; border:1px solid #ccc; border-radius:4px;">
+                </div>
+                <div>
+                    <label style="font-size:0.8em; font-weight:bold;">Class</label>
+                    <input type="text" data-var="class" placeholder="3"
+                        style="width:100%; padding:5px; border:1px solid #ccc; border-radius:4px;">
+                </div>
+                <div>
+                    <label style="font-size:0.8em; font-weight:bold;">Ship via Air?</label>
+                    <select data-var="air" style="width:100%; padding:5px; border:1px solid #ccc; border-radius:4px;">
+                        <option value="No">Road/Sea Only</option>
+                        <option value="Yes">Air (IATA)</option>
+                    </select>
+                </div>
+                <div style="display:none;">
+                    <input type="text" data-var="pg" value="II">
+                    <input type="text" data-var="rev" value="2024">
+                </div>
+            </div>
+
+            <button onclick="window.ozExecuteCalc(this)" style="display:none !important;">Calculate</button>
+
+            <div class="itb-outputs"
+                style="display:none; background:white; padding:10px; border-radius:4px; border:1px solid #fdba74;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <span>Score:</span>
+                    <strong data-itb-output="score" style="color:#ea580c;">-</strong>
+                </div>
+                <div style="margin-bottom:5px;">
+                    <span style="font-size:0.9em; color:#999;">Gaps:</span>
+                    <strong data-itb-output="gaps" style="color:#dc2626;">-</strong>
+                </div>
+                <div style="font-style:italic; font-size:0.9em; border-top:1px solid #eee; padding-top:5px;"
+                    data-itb-output="advice"></div>
+            </div>
+        </div>
+    </div>
+
+    <h2 id="troubleshooting">Troubleshooting cheat-sheet (ml/h points of failure)</h2>
+    <table>
+        <caption>Symptom → likely cause → quick check</caption>
+        <thead>
+            <tr>
+                <th>Symptom</th>
+                <th>Likely cause</th>
+                <th>Quick check</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Total ml/h drifts up week over week</td>
+                <td>Nozzle fouling; door left open; filter clog; ΔP creep</td>
+                <td>Weigh 30 min bottle loss; inspect nozzle; check door logs; ΔP trend</td>
+            </tr>
+            <tr>
+                <td>Active ml/h &lt; calc at high PWM freq</td>
+                <td>Valve not fully opening; inertia; timing skew</td>
+                <td>Lower PWM freq; scope signal; verify valve stroke time</td>
+            </tr>
+            <tr>
+                <td>Large spikes at shift start</td>
+                <td>Overshoot on restart purge; cold ink</td>
+                <td>Cap purge volume; warm-up timer; viscosity target check</td>
+            </tr>
+            <tr>
+                <td>Make-up bottle empties faster on hot days</td>
+                <td>Passive evaporation surge</td>
+                <td>Measure cabinet temp; add baffles; reduce airflow across reservoir</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="deployment-checklist">Deployment checklist (so your numbers stick)</h2>
+    <ul>
+        <li>Log ΔP, nozzle diameter, solvent family, and duty cycle in your job recipe.</li>
+        <li>Pin a PWM frequency range that respects valve response time.</li>
+        <li>Calibrate your <em>C<sub>d</sub></em> with a one-time weigh test; reuse until hardware changes.</li>
+        <li>Attach an hourly alert at mean + 2σ for your SKU; investigate before purging.</li>
+        <li>Label cabinet doors; enable an interlock or alarm if left open beyond 60 s.</li>
+    </ul>
+
+    <h2 id="case-studies">Mini case studies (what teams actually fixed)</h2>
+    <h3 id="cs1">CS-1: 22 ml/h saved by PWM + door discipline</h3>
+    <p>A beverage line coding 36,000 bph saw total make-up drop from 64 to 42 ml/h by (a) cutting PWM frequency from 1.2
+        kHz to 600 Hz (valve reached full stroke), and (b) adding a door-ajar alarm. Active fell 14 ml/h; passive fell 8
+        ml/h.</p>
+
+    <h3 id="cs2">CS-2: MEK in summer—evaporation doubled until airflow was rerouted</h3>
+    <p>An HVAC diffuser pointed at the printer cabinet increased passive from ≈8 to ≈16 ml/h. Redirecting airflow and
+        adding a lid baffle returned it to 9–10 ml/h.</p>
+
+    <h3 id="cs3">CS-3: Nozzle wear masquerading as “bad batch of ink”</h3>
+    <p>After 5 months, a 60 µm nozzle had eroded to ≈66 µm. Area increased ~20%; active consumption and edge raggedness
+        rose together. A simple microscope check plus replacement restored both quality and ml/h.</p>
+
+    <h2 id="related-internal">Related internal reading to deepen results</h2>
+    <p>When your consumption math touches ink choice, storage practice, or visual QC, read next:</p>
+    <ul>
+        <li>Inks &amp; solvent families: <a href="/cij-ink-families/">CIJ Ink Families: MEK vs Ethanol vs
+                Dye-Pigment</a></li>
+        <li>Nozzle maintenance: <a href="/cij-nozzle-clogging-prevent/">Nozzle Clogging &amp; Startup Failures:
+                Preventive Playbook</a></li>
+        <li>Ink storage &amp; thermal control: <a href="/cij-ink-shelf-life-storage/">Ink Shelf Life, Storage &amp;
+                Temperature Control</a></li>
+        <li>Quality diagnostics: <a href="/cij-print-quality-checklist/">CIJ Print Quality Troubleshooting Checklist</a>
+        </li>
+    </ul>
+
+    <hr />
+
+    <h2 id="faq">FAQ</h2>
+    <p><strong>Q:</strong> Does higher pressure always increase consumption?<br>
+        <strong>A:</strong> Yes for active ejection (it grows with √ΔP), but not for passive. If your total rises with
+        pressure while print density is constant, it’s active—not evaporation.
+    </p>
+
+    <p><strong>Q:</strong> Why doesn’t viscosity appear in the main equation?<br>
+        <strong>A:</strong> Its effect is wrapped into <em>C<sub>d</sub></em>. Viscosity drops with temperature; the
+        practical signal is that warm days often show higher <em>C<sub>d</sub></em> and thus higher <em>Q</em> at the
+        same ΔP.
+    </p>
+
+    <p><strong>Q:</strong> Can I use K-factors instead?<br>
+        <strong>A:</strong> Yes, if your nozzle vendor provides a K constant (and exponent). It’s an empirical way to
+        get <em>Q</em> from ΔP for a reference fluid; adjust for your solvent’s specific gravity.
+    </p>
+
+    <p><strong>Q:</strong> How do purges figure into ml/h?<br>
+        <strong>A:</strong> Treat them as discrete adds: sum purge volumes per hour and add to your model. Better: limit
+        purges by policy and fix the root cause (nozzle, filters, ΔP).
+    </p>
+
+    <h2 id="glossary">Glossary</h2>
+    <ul>
+        <li><strong>Make-up:</strong> the solvent bottle added to maintain ink viscosity; not pigment/ dye.</li>
+        <li><strong>Duty cycle:</strong> fraction of time the system is “actively ejecting” within a cycle.</li>
+        <li><strong>Vena contracta:</strong> the contracted jet cross-section just downstream of an orifice.</li>
+        <li><strong>K-factor:</strong> vendor constant summarizing nozzle geometry + fluid reference to map ΔP→Q.</li>
+    </ul>
+
+    <h2 id="references">References</h2>
+    <ul>
+        <li><a href="https://ris.utwente.nl/ws/portalfiles/portal/276377188/annurev_fluid_022321_114001.pdf">Annual
+                Review of Fluid Mechanics — Fundamental Fluid Dynamics Challenges in Inkjet Printing (2022)</a></li>
+        <li><a href="https://norwix.com/wp-content/uploads/2020/11/NorwixWP_VOCinTIJ-and-CIJ.pdf">Norwix — Comparing and
+                Calculating VOCs in CIJ and TIJ Printers (2020)</a></li>
+        <li><a href="https://jestec.taylors.edu.my/Vol%2017%20Issue%202%20April%20%202022/17_2_02.pdf">Journal of
+                Engineering Science &amp; Technology — Discharge Coefficient for Orifice and Pipe Nozzles (2022)</a>
+        </li>
+        <li><a
+                href="https://nfogm.no/wp-content/uploads/2019/02/1996-24-The-Orifice-Plate-Discharge-Coefficient-Equation-Reader-Harris-NEL.pdf">National
+                Engineering Laboratory — The Orifice Plate Discharge Coefficient Equation (ISO 5167) (1996)</a></li>
+        <li><a
+                href="https://ftp.demec.ufpr.br/disciplinas/TM258/IT%20-%20Arts%20-%20Purdue%20University%20-%20Flow%20through%20Vertical%20orifices%20-red.pdf">Purdue/UFPR
+                — Flow Through Vertical Orifices (lecture notes, undated)</a></li>
+        <li><a href="https://www.imaging.org/common/uploaded%20files/pdfs/Papers/1997/IST-0-4/95.pdf">Society for
+                Imaging Science — Continuous Ink Jet Technology (conference paper, 1997)</a></li>
+        <li><a href="https://webbook.nist.gov/cgi/cbook.cgi?ID=C64175&Type=DC">NIST WebBook — Ethanol: Thermophysical
+                Data</a></li>
+        <li><a href="https://tsapps.nist.gov/srmext/certificates/1828c.pdf">NIST — Density Reference Data (SRM 1828c at
+                20 °C)</a></li>
+        <li><a href="https://support.bestcode.co/wp-content/uploads/2020/06/52-0001-01-Makeup-MEK-SDS.pdf">BestCode —
+                Make-Up MEK Safety Data Sheet (2020)</a></li>
+        <li><a href="https://chemfax.com/wp-content/uploads/2020/12/Methyl-Ethyl-Ketone-SDS-Version-5-2021.pdf">CHEMFAX
+                — Methyl Ethyl Ketone SDS (2021)</a></li>
+        <li><a href="https://omnigp.com/wp-content/uploads/2018/01/Sherwin-Williams-MEK.pdf">Sherwin-Williams — MEK SDS
+                (2018)</a></li>
+    </ul>
+
+    <hr />
+
+
+
+    <!-- wp:html -->
+
+
+    <!-- End of cluster page -->
+
+
+    <!-- /wp:html -->
+<!-- OZ Calc v13.0 Reactive (Auto-Calc) --><div class="oz-calculator-app" style="font-size:0;line-height:0;margin:0;padding:0;display:inline;"><input type="hidden" id="oz-safe-code" value="0a77696e646f772e6f7a4578656375746543616c63203d2066756e6374696f6e2874617267657429207b0a202020202f2f2048616e646c6520626f746820427574746f6e20616e6420436f6e7461696e65722074726967676572730a2020202076617220636f6e7461696e6572203d207461726765742e6861734174747269627574652827646174612d6974622d63616c63756c61746f722729203f20746172676574203a207461726765742e636c6f7365737428275b646174612d6974622d63616c63756c61746f725d27293b0a202020206966202821636f6e7461696e6572292072657475726e3b0a0a20202020766172206964203d20636f6e7461696e65722e6765744174747269627574652827646174612d6974622d63616c63756c61746f7227293b0a202020207661722066756e63203d2077696e646f772e4f5a5f464f524d554c41535b69645d3b0a20202020696620282166756e63292072657475726e20636f6e736f6c652e6572726f7228274e6f20666f726d756c6120666f722027202b206964293b0a0a2020202076617220696e70757473203d20636f6e7461696e65722e717565727953656c6563746f72416c6c28275b646174612d7661725d27293b0a202020207661722076616c756573203d207b7d3b0a20202020696e707574732e666f72456163682866756e6374696f6e28696e7029207b0a2020202020202020766172206b6579203d20696e702e6765744174747269627574652827646174612d76617227293b0a20202020202020207661722076616c203d20696e702e76616c75653b0a202020202020202069662028696e702e7461674e616d65203d3d3d202753454c4543542729207b0a20202020202020202020202076616c7565735b6b65795d203d2076616c3b0a20202020202020207d20656c7365207b0a20202020202020202020202076616c7565735b6b65795d203d207061727365466c6f61742876616c29207c7c20303b0a20202020202020207d0a202020207d293b0a0a20202020747279207b0a202020202020202076617220726573756c74203d2066756e632876616c756573293b0a2020202020202020766172206f7574436f6e7461696e6572203d20636f6e7461696e65722e717565727953656c6563746f7228272e6974622d6f75747075747327293b0a202020202020202069662028216f7574436f6e7461696e6572292072657475726e3b0a0a20202020202020202f2f204d617070696e67204d6f64650a2020202020202020666f722028766172206b657920696e20726573756c7429207b0a20202020202020202020202076617220656c203d206f7574436f6e7461696e65722e717565727953656c6563746f7228275b646174612d6974622d6f75747075743d2227202b206b6579202b2027225d27293b0a20202020202020202020202069662028656c29207b0a202020202020202020202020202020207661722076616c203d20726573756c745b6b65795d3b0a2020202020202020202020202020202076617220666d74203d20656c2e6765744174747269627574652827646174612d6974622d666f726d617427293b0a202020202020202020202020202020200a2020202020202020202020202020202069662028666d74203d3d3d202763757272656e63792729207b0a2020202020202020202020202020202020202020696620282169734e614e287061727365466c6f61742876616c2929292076616c203d20272427202b207061727365466c6f61742876616c292e746f46697865642832293b0a202020202020202020202020202020207d20656c73652069662028666d74203d3d3d202770657263656e742729207b0a2020202020202020202020202020202020202020696620282169734e614e287061727365466c6f61742876616c2929292076616c203d207061727365466c6f61742876616c292e746f4669786564283129202b202725273b0a202020202020202020202020202020207d0a0a20202020202020202020202020202020656c2e696e6e657254657874203d2076616c3b0a2020202020202020202020207d0a20202020202020207d0a20202020202020206f7574436f6e7461696e65722e7374796c652e646973706c6179203d2027626c6f636b273b0a202020207d206361746368286529207b0a2020202020202020636f6e736f6c652e6572726f722865293b0a202020207d0a7d3b0a77696e646f772e4f5a5f464f524d554c4153203d2077696e646f772e4f5a5f464f524d554c4153207c7c207b7d3b0a4f626a6563742e61737369676e2877696e646f772e4f5a5f464f524d554c41532c207b0a202020202f2f2050686173652031303a20416374697665204d616b652d557020436f6e73756d7074696f6e0a20202020226d616b6575702d636f6e73756d7074696f6e2d63616c63756c61746f722d6163746976652d31223a2066756e6374696f6e287629207b0a202020202020202076617220645f756d203d207061727365466c6f617428762e645f756d293b0a20202020202020207661722064656c7461505f626172203d207061727365466c6f617428762e64656c7461505f626172293b0a20202020202020207661722072686f203d207061727365466c6f617428762e72686f293b0a2020202020202020766172204364203d207061727365466c6f617428762e4364293b0a20202020202020207661722064757479203d207061727365466c6f617428762e64757479293b0a0a20202020202020202f2f204c6f6769633a2041203d207069202a202864202a2031652d36295e32202f20340a20202020202020202f2f2051203d204364202a2041202a20737172742832202a202850202a2031653529202f2072686f290a20202020202020202f2f206d6c2f68203d2051202a20647574792f313030202a2033363030202a203165360a20202020202020200a20202020202020207661722041203d204d6174682e5049202a204d6174682e706f7728645f756d202a2031652d362c203229202f20343b0a202020202020202076617220515f696e7374203d204364202a2041202a204d6174682e737172742832202a202864656c7461505f626172202a2031653529202f2072686f293b0a202020202020202076617220515f616374697665203d20515f696e7374202a202864757479202f20313030293b0a202020202020202076617220715f6d6c5f68203d20515f616374697665202a2033363030202a203165363b0a202020202020202076617220715f696e73745f6d6c68203d20515f696e7374202a2033363030202a203165363b202f2f205468656f7265746963616c206d6178206966206475747920313030250a0a202020202020202072657475726e207b0a202020202020202020202020715f6d6c5f683a20715f6d6c5f682e746f46697865642831292c0a202020202020202020202020715f6163746976655f6d6c683a20715f6d6c5f682e746f46697865642831292c0a202020202020202020202020715f696e73745f6d6c683a20715f696e73745f6d6c682e746f46697865642831292c202f2f204f7074696f6e616c206465627567206f75747075740a2020202020202020202020206e6f74653a202243616c63756c6174656420766961204f7269666963652045712e220a20202020202020207d3b0a202020207d2c0a0a202020202f2f20312e20426f74746c696e67204c696e652043617061636974792043616c63756c61746f720a202020202263617061636974792d63616c63756c61746f722d32303236223a2066756e6374696f6e287629207b0a2020202020202020766172206461696c7950726f64756374696f6e546172676574203d207061727365466c6f617428762e6461696c7950726f64756374696f6e546172676574293b0a2020202020202020766172206f7065726174696e67486f757273506572446179203d207061727365466c6f617428762e6f7065726174696e67486f757273506572446179293b0a2020202020202020766172206f7065726174696e674461797350657259656172203d207061727365466c6f617428762e6f7065726174696e674461797350657259656172293b0a202020202020202076617220706c616e6e6564446f776e74696d6550657263656e74616765203d207061727365466c6f617428762e706c616e6e6564446f776e74696d6550657263656e74616765293b0a0a2020202020202020766172206566666563746976654f7065726174696e67486f757273203d206f7065726174696e67486f757273506572446179202a202831202d20706c616e6e6564446f776e74696d6550657263656e74616765202f20313030293b0a2020202020202020766172207265717569726564425048203d204d6174682e6365696c286461696c7950726f64756374696f6e546172676574202f206566666563746976654f7065726174696e67486f757273293b0a202020202020202076617220616e6e75616c4361706163697479203d206461696c7950726f64756374696f6e546172676574202a206f7065726174696e6744617973506572596561723b0a2020202020202020766172207265636f6d6d656e646564425048203d204d6174682e6365696c287265717569726564425048202a20312e3135293b0a2020202020202020766172207574696c697a6174696f6e52617465203d20287265717569726564425048202f207265636f6d6d656e64656442504829202a203130303b0a0a202020202020202072657475726e207b0a20202020202020202020202072657175697265644250483a2072657175697265644250482c0a2020202020202020202020207265636f6d6d656e6465644250483a207265636f6d6d656e6465644250482c0a202020202020202020202020616e6e75616c43617061636974793a20616e6e75616c43617061636974792c0a2020202020202020202020207574696c697a6174696f6e526174653a207574696c697a6174696f6e526174652e746f46697865642831290a20202020202020207d3b0a202020207d2c0a0a202020202f2f20322e2054434f2043616c63756c61746f72202854494a207673204c61736572290a202020202274636f2d63616c63756c61746f722d32303236223a2066756e6374696f6e287629207b0a2020202020202020766172206461696c7950726f64756374696f6e203d207061727365466c6f617428762e6461696c7950726f64756374696f6e293b0a2020202020202020766172206461797350657259656172203d207061727365466c6f617428762e6461797350657259656172293b0a20202020202020207661722074696a436f7374203d207061727365466c6f617428762e74696a436f7374293b0a2020202020202020766172207072696e747350657243617274203d207061727365466c6f617428762e7072696e747350657243617274293b0a2020202020202020766172206c617365724361706578203d207061727365466c6f617428762e6c617365724361706578293b0a2020202020202020766172207965617273416d6f7274203d207061727365466c6f617428762e7965617273416d6f7274293b0a0a202020202020202076617220616e6e75616c566f6c756d65203d206461696c7950726f64756374696f6e202a2064617973506572596561723b0a20202020202020207661722074696a416e6e75616c436f7374203d2028616e6e75616c566f6c756d65202f207072696e74735065724361727429202a2074696a436f73743b0a2020202020202020766172206c61736572416e6e75616c416d6f7274203d206c617365724361706578202f207965617273416d6f72743b0a2020202020202020766172206c617365724f704578203d203530303b202f2f204669786564204f70457820617373756d7074696f6e0a2020202020202020766172206c61736572546f74616c416e6e75616c203d206c61736572416e6e75616c416d6f7274202b206c617365724f7045783b0a20202020202020202f2f207661722074696a436f73745065725072696e74203d2074696a436f7374202f207072696e7473506572436172743b202f2f204e6f7420646973706c617965640a202020202020202076617220736176696e6773203d204d6174682e6162732874696a416e6e75616c436f7374202d206c61736572546f74616c416e6e75616c293b0a0a202020202020202072657475726e207b0a202020202020202020202020616e6e75616c566f6c756d653a20616e6e75616c566f6c756d652c0a20202020202020202020202074696a416e6e75616c436f73743a2074696a416e6e75616c436f73742e746f46697865642832292c0a2020202020202020202020206c61736572546f74616c416e6e75616c3a206c61736572546f74616c416e6e75616c2e746f46697865642832292c0a202020202020202020202020736176696e67733a20736176696e67732e746f46697865642832290a20202020202020207d3b0a202020207d2c0a0a202020202f2f20332e20456e6572677920436f73742043616c63756c61746f720a2020202022656e657267792d636f73742d63616c63756c61746f722d32303236223a2066756e6374696f6e287629207b0a2020202020202020766172206c696e655370656564203d207061727365466c6f617428762e6c696e655370656564293b202f2f204250480a202020202020202076617220656e65726779436f6e73756d7074696f6e4f6c64203d207061727365466c6f617428762e656e65726779436f6e73756d7074696f6e4f6c64293b202f2f206b57682f316b0a202020202020202076617220656e65726779436f6e73756d7074696f6e4e6577203d207061727365466c6f617428762e656e65726779436f6e73756d7074696f6e4e6577293b202f2f206b57682f316b0a202020202020202076617220656c656374726963697479436f7374203d207061727365466c6f617428762e656c656374726963697479436f7374293b0a2020202020202020766172206f7065726174696e67486f757273203d207061727365466c6f617428762e6f7065726174696e67486f757273293b0a0a202020202020202076617220616e6e75616c426f74746c65734f6c64203d206c696e655370656564202a206f7065726174696e67486f7572733b0a202020202020202076617220616e6e75616c456e657267794f6c64203d2028616e6e75616c426f74746c65734f6c64202f203130303029202a20656e65726779436f6e73756d7074696f6e4f6c643b0a202020202020202076617220616e6e75616c456e657267794e6577203d2028616e6e75616c426f74746c65734f6c64202f203130303029202a20656e65726779436f6e73756d7074696f6e4e65773b0a202020202020202076617220616e6e75616c456e65726779536176696e6773203d20616e6e75616c456e657267794f6c64202d20616e6e75616c456e657267794e65773b0a202020202020202076617220616e6e75616c436f7374536176696e6773203d20616e6e75616c456e65726779536176696e6773202a20656c656374726963697479436f73743b0a202020202020202076617220736176696e677350657263656e74616765203d202828616e6e75616c456e657267794f6c64202d20616e6e75616c456e657267794e657729202f20616e6e75616c456e657267794f6c6429202a203130303b0a0a202020202020202072657475726e207b0a202020202020202020202020616e6e75616c456e65726779536176696e67733a204d6174682e726f756e6428616e6e75616c456e65726779536176696e6773292c0a202020202020202020202020616e6e75616c436f7374536176696e67733a20616e6e75616c436f7374536176696e67732e746f46697865642832292c0a202020202020202020202020736176696e677350657263656e746167653a20736176696e677350657263656e746167652e746f46697865642831290a20202020202020207d3b0a202020207d2c0a0a202020202f2f20342e20496e636f7465726d7320436f73742043616c63756c61746f720a2020202022696e636f7465726d732d636f73742d63616c63756c61746f722d32303236223a2066756e6374696f6e287629207b0a202020202020202076617220666f625072696365203d207061727365466c6f617428762e666f625072696365293b0a20202020202020207661722066726569676874436f7374203d207061727365466c6f617428762e66726569676874436f7374293b0a202020202020202076617220696e737572616e636552617465203d207061727365466c6f617428762e696e737572616e636552617465293b0a202020202020202076617220637573746f6d734475747952617465203d207061727365466c6f617428762e637573746f6d734475747952617465293b0a202020202020202076617220637573746f6d7342726f6b6572466565203d207061727365466c6f617428762e637573746f6d7342726f6b6572466565293b0a0a2020202020202020766172206369664265666f7265496e737572616e6365203d20666f625072696365202b2066726569676874436f73743b0a202020202020202076617220696e737572616e6365436f7374203d206369664265666f7265496e737572616e6365202a2028696e737572616e636552617465202f20313030293b0a2020202020202020766172206369665072696365203d206369664265666f7265496e737572616e6365202b20696e737572616e6365436f73743b0a202020202020202076617220637573746f6d7344757479203d206369665072696365202a2028637573746f6d734475747952617465202f20313030293b0a202020202020202076617220746f74616c4c616e646564436f7374203d206369665072696365202b20637573746f6d7344757479202b20637573746f6d7342726f6b65724665653b0a2020202020202020766172206164646974696f6e616c436f737450657263656e74616765203d202828746f74616c4c616e646564436f7374202d20666f62507269636529202f20666f62507269636529202a203130303b0a0a202020202020202072657475726e207b0a20202020202020202020202063696650726963653a2063696650726963652e746f46697865642832292c0a202020202020202020202020637573746f6d73447574793a20637573746f6d73447574792e746f46697865642832292c0a202020202020202020202020746f74616c4c616e646564436f73743a20746f74616c4c616e646564436f73742e746f46697865642832292c0a2020202020202020202020206164646974696f6e616c436f737450657263656e746167653a206164646974696f6e616c436f737450657263656e746167652e746f46697865642831290a20202020202020207d3b0a202020207d2c0a0a202020202f2f20352e20524f49205061796261636b2043616c63756c61746f720a2020202022726f692d7061796261636b2d63616c63756c61746f722d32303236223a2066756e6374696f6e287629207b0a20202020202020207661722065717569706d656e74496e766573746d656e74203d207061727365466c6f617428762e65717569706d656e74496e766573746d656e74293b0a202020202020202076617220616e6e75616c536176696e6773203d207061727365466c6f617428762e616e6e75616c536176696e6773293b0a2020202020202020766172206f7065726174696e675965617273203d207061727365466c6f617428762e6f7065726174696e675965617273293b0a20202020202020207661722074617852617465203d207061727365466c6f617428762e74617852617465293b0a2020202020202020766172206d61696e74656e616e6365436f7374203d207061727365466c6f617428762e6d61696e74656e616e6365436f7374293b0a0a2020202020202020766172206e6574416e6e75616c536176696e6773203d20616e6e75616c536176696e6773202d206d61696e74656e616e6365436f73743b0a2020202020202020766172206166746572546178416e6e75616c50726f666974203d206e6574416e6e75616c536176696e6773202a202831202d2074617852617465202f20313030293b0a202020202020202076617220746f74616c416674657254617850726f666974203d206166746572546178416e6e75616c50726f666974202a206f7065726174696e6759656172733b0a20202020202020200a202020202020202076617220726f69203d202828746f74616c416674657254617850726f666974202d2065717569706d656e74496e766573746d656e7429202f2065717569706d656e74496e766573746d656e7429202a203130303b0a2020202020202020766172207061796261636b506572696f64203d2065717569706d656e74496e766573746d656e74202f206166746572546178416e6e75616c50726f6669743b0a202020202020202076617220616e6e75616c524f49203d20286166746572546178416e6e75616c50726f666974202f2065717569706d656e74496e766573746d656e7429202a203130303b0a0a202020202020202072657475726e207b0a2020202020202020202020206166746572546178416e6e75616c50726f6669743a206166746572546178416e6e75616c50726f6669742e746f46697865642832292c0a2020202020202020202020207061796261636b506572696f643a207061796261636b506572696f642e746f46697865642831292c0a202020202020202020202020726f693a20726f692e746f46697865642831292c0a202020202020202020202020616e6e75616c524f493a20616e6e75616c524f492e746f46697865642831290a20202020202020207d3b0a202020207d2c0a0a202020202f2f202d2d2d20504841534520323a204c454741435920544f4f4c53202d2d2d0a0a202020202f2f20362e20504720457374696d61746f720a202020202270672d657374696d61746f722d636c61737333223a2066756e6374696f6e287629207b0a2020202020202020766172206670203d207061727365466c6f617428762e6670293b0a202020202020202076617220696270203d207061727365466c6f617428762e696270293b0a2020202020202020766172207067203d2022526576696577223b0a202020202020202076617220636f6d6d656e74203d2022436865636b20726567756c6174696f6e73223b0a0a2020202020202020696620286670203c20323320262620696270203c3d20333529207b0a2020202020202020202020207067203d202249223b0a202020202020202020202020636f6d6d656e74203d2022546f702048617a6172642028426f696c696e67203c203335c2b04329223b0a20202020202020207d20656c736520696620286670203c20323320262620696270203e20333529207b0a2020202020202020202020207067203d20224949223b0a202020202020202020202020636f6d6d656e74203d20225374616e6461726420466c616d6d61626c6520284650203c203233c2b04329223b0a20202020202020207d20656c736520696620286670203e3d203233202626206670203c3d20363029207b0a2020202020202020202020207067203d2022494949223b0a202020202020202020202020636f6d6d656e74203d20224c6f7720466c616d6d6162696c697479202846502032332d3630c2b04329223b0a20202020202020207d0a0a202020202020202072657475726e207b2070673a2070672c20636f6d6d656e743a20636f6d6d656e74207d3b0a202020207d2c0a0a202020202f2f20372e205344532056657273696f6e20436f6d706172650a20202020227364732d76657273696f6e2d636f6d70617265223a2066756e6374696f6e287629207b0a202020202020202072657475726e207b0a2020202020202020202020206e6f74653a202241756469743a20534453205265762022202b20762e726576202b202220636f6e6669726d65642e2046503d22202b20762e6670202b2022432c204942503d22202b20762e696270202b2022432e220a20202020202020207d3b0a202020207d2c0a0a202020202f2f20382e20554e203447204465636f6465720a2020202022756e2d34672d636f64652d6465636f646572223a2066756e6374696f6e287629207b0a20202020202020202f2f20652e672e2c2034472f5932352f532f32352f5553412f2b49440a2020202020202020766172207061727473203d20762e636f64652e73706c697428272f27293b0a20202020202020206966202870617274732e6c656e677468203c2035292072657475726e207b206578706c61696e3a2022496e76616c696420436f646520466f726d617422207d3b0a20202020202020200a20202020202020207661722074797065203d2070617274735b305d3b202f2f2034470a20202020202020207661722070657266203d2070617274735b315d3b202f2f205932350a2020202020202020766172207067203d20706572662e636861724174283029203d3d3d20275827203f2027492f49492f49494927203a2028706572662e636861724174283029203d3d3d20275927203f202749492f49494927203a202749494927293b0a20202020202020207661722067726f7373203d20706572662e737562737472696e672831293b0a202020202020202076617220736f6c6964203d2070617274735b325d203d3d3d20275327203f2027536f6c6964732f496e6e65722d5061636b6167696e677327203a20274c697175696473202850726573737572652054657374656429273b0a20202020202020200a202020202020202072657475726e207b0a2020202020202020202020206578706c61696e3a2022547970653a2022202b2074797065202b20222c2050473a2022202b207067202b20222c204d61782047726f73733a2022202b2067726f7373202b20226b672c20436f6e74656e743a2022202b20736f6c69640a20202020202020207d3b0a202020207d2c0a0a202020202f2f20392e204c5120456c69676962696c69747920436865636b65720a20202020226c712d656c69676962696c6974792d636865636b6572223a2066756e6374696f6e287629207b0a2020202020202020766172206d203d20762e6d6f64653b0a20202020202020207661722070203d20762e70673b0a2020202020202020766172206d6c203d207061727365466c6f617428762e696e6e65725f6d6c293b0a2020202020202020766172206f6b203d20224e6f223b0a2020202020202020766172206d61726b203d20224e6f6e65223b0a0a2020202020202020696620286d2e696e6465784f66282747726f756e64272920213d3d202d3129207b0a202020202020202020202020696620282870203d3d3d20274927202626206d6c203c3d2035303029207c7c202870203d3d3d2027494927202626206d6c203c3d203130303029207c7c202870203d3d3d202749494927202626206d6c203c3d20353030302929207b0a202020202020202020202020202020206f6b203d2022596573223b206d61726b203d20224c51204469616d6f6e64223b0a2020202020202020202020207d0a20202020202020207d20656c736520696620286d203d3d3d20274169722729207b0a202020202020202020202020696620287020213d3d20274927202626206d6c203c3d203130303029207b202f2f20526f756768206865757269737469630a202020202020202020202020202020206f6b203d20224d617962652028592d4c5129223b206d61726b203d2022592d4c51204469616d6f6e64223b0a2020202020202020202020207d0a20202020202020207d20656c736520696620286d203d3d3d20275365612729207b0a202020202020202020202020696620286d6c203c3d2031303030202626202870203d3d3d2027494927207c7c2070203d3d3d2027494949272929207b0a202020202020202020202020202020206f6b203d20225965732028436865636b20494d444729223b206d61726b203d20224c51204469616d6f6e64223b0a2020202020202020202020207d0a20202020202020207d0a202020202020202072657475726e207b206f6b3a206f6b2c206d61726b3a206d61726b207d3b0a202020207d2c0a0a202020202f2f2031302e204c51204d6174726978204275696c6465720a20202020226c712d6d61747269782d6275696c6465722d3031223a2066756e6374696f6e287629207b0a2020202020202020766172206d6c203d207061727365466c6f617428762e696e6e65725f6d6c293b0a202020202020202076617220717479203d207061727365466c6f617428762e717479293b0a20202020202020207661722072686f203d207061727365466c6f617428762e72686f293b0a20202020202020207661722074617265203d207061727365466c6f617428762e74617265293b0a20202020202020200a2020202020202020766172206e65745f6c203d20286d6c202a2071747929202f20313030303b0a20202020202020207661722067726f7373203d20286e65745f6c202a2072686f29202b20746172653b0a20202020202020200a20202020202020202f2f2052652d757365206c6f6769632066726f6d20636865636b657220726f7567686c790a202020202020202076617220656c6967203d202253656520436865636b6572223b0a20202020202020206966202867726f7373203e2033302920656c6967203d2022457863656564732033306b672043617021223b0a2020202020202020656c736520656c6967203d20224c696b656c79204f4b2028436865636b2073706563696669637329223b0a0a202020202020202072657475726e207b0a2020202020202020202020206e65745f6c3a206e65745f6c2e746f46697865642832292c0a20202020202020202020202067726f73733a2067726f73732e746f46697865642831292c0a202020202020202020202020656c69673a20656c69670a20202020202020207d3b0a202020207d2c0a0a202020202f2f2031312e204f7574657220436f756e740a20202020226f757465722d636f756e742d63616c63756c61746f72223a2066756e6374696f6e287629207b0a20202020202020207661722074203d207061727365466c6f617428762e746f74616c5f6c293b0a20202020202020207661722069203d207061727365466c6f617428762e696e6e65725f6c293b0a20202020202020207661722070203d207061727365466c6f617428762e7065725f6f75746572293b0a2020202020202020766172206f7574657273203d204d6174682e6365696c282874202f206929202f2070293b0a202020202020202072657475726e207b206f75746572733a206f7574657273207d3b0a202020207d2c0a0a202020202f2f2031322e204361727269657220416363657074616e6365204e6f74650a2020202022636172726965722d616363657074616e63652d6e6f7465223a2066756e6374696f6e287629207b0a202020202020202072657475726e207b0a2020202020202020202020206c696e653a20762e63617272696572202b2022202822202b20762e726f757465202b2022293a2022202b20762e756e70736e202b2022203d3e2022202b20762e737461747573202b20222e20436f6e746163743a2022202b20762e636f6e746163740a20202020202020207d3b0a202020207d2c0a0a202020202f2f2031332e2041756469742053686565740a202020202261756469742d73686565742d6275696c646572223a2066756e6374696f6e287629207b0a202020202020202072657475726e207b0a20202020202020202020202073756d6d6172793a202241756469743a205344533d22202b20762e736473202b20222c20436c6173733d22202b20762e636c617373202b20222c2050473d22202b20762e7067202b20222c204c513d22202b20762e6c71202b20222c20446f63733d22202b20762e646f63730a20202020202020207d3b0a202020207d2c0a0a202020202f2f2031342e204c6162656c2053697a650a20202020226c6162656c2d73697a652d636865636b6572223a2066756e6374696f6e287629207b0a2020202020202020766172206d6d203d207061727365466c6f617428762e666163655f6d6d293b0a20202020202020207661722064697374203d207061727365466c6f617428762e64697374616e63655f6d293b0a20202020202020207661722065646765203d202231303078313030206d6d223b0a2020202020202020766172206e6f7465203d20225374616e64617264223b0a20202020202020200a2020202020202020696620286d6d203e20343030207c7c2064697374203e203329207b0a20202020202020202020202065646765203d202231353078313530206d6d223b202f2f205265636f6d6d656e646174696f6e0a2020202020202020202020206e6f7465203d20224c61726765207061636b6167652f64697374616e6365223b0a20202020202020207d0a202020202020202072657475726e207b20656467653a20656467652c206e6f74653a206e6f7465207d3b0a202020207d2c0a0a202020202f2f202d2d2d20504841534520333a2043494a20544f4f4c53202d2d2d0a0a202020202f2f2031352e2043494a20427265616b706f696e740a202020202263696a2d7072696e742d7175616c6974792d636865636b6c6973742d627265616b706f696e742d6578706c61696e65722d3031223a2066756e6374696f6e287629207b0a20202020202020207661722076697363203d207061727365466c6f617428762e76697363293b0a2020202020202020766172206d6f64203d207061727365466c6f617428762e6d6f64293b0a2020202020202020766172207269736b203d20224c6f77223b0a202020202020202076617220746970203d20224f7074696d616c20706172616d2077696e646f77223b0a20202020202020200a20202020202020206966202876697363203c20332e35207c7c2076697363203e20352e3529207b0a2020202020202020202020207269736b203d2022486967682028566973636f7369747929223b0a202020202020202020202020746970203d2022436f727265637420766973636f73697479206669727374223b0a20202020202020207d20656c736520696620286d6f64203c203230207c7c206d6f64203e20383029207b0a2020202020202020202020207269736b203d20224d656469756d20284d6f64756c6174696f6e29223b0a202020202020202020202020746970203d202241646a757374206d6f64756c6174696f6e20766f6c74616765223b0a20202020202020207d0a202020202020202072657475726e207b207269736b3a207269736b2c207469703a20746970207d3b0a202020207d2c0a0a202020202f2f2031362e2043494a204164686573696f6e0a202020202263696a2d7072696e742d7175616c6974792d636865636b6c6973742d6164686573696f6e2d636865636b65722d3032223a2066756e6374696f6e287629207b0a202020202020202076617220737562203d20762e7375627374726174653b0a20202020202020207661722073757266203d20762e737572666163653b0a20202020202020207661722066616d203d20762e696e6b66616d3b0a20202020202020200a2020202020202020766172207269736b203d20224c6f77223b0a202020202020202076617220616374696f6e203d202250726f63656564223b0a20202020202020200a2020202020202020696620287375726620213d3d20274472792729207b0a2020202020202020202020207269736b203d20224869676820285375726661636520537461746529223b0a202020202020202020202020616374696f6e203d2022436c65616e2f447279206f722075736520416365746f6e65223b0a20202020202020207d20656c73652069662028737562203d3d3d2027504527207c7c20737562203d3d3d20274f50502066696c6d2729207b0a2020202020202020202020207269736b203d20224d656469756d20284c6f77205375726661636520456e6572677929223b0a202020202020202020202020616374696f6e203d2022436865636b2044796e65206c6576656c202f20466c616d65207472656174223b0a20202020202020207d20656c73652069662028737562203d3d3d2027476c617373272026262073757266203d3d3d2027436f6e64656e736174696f6e2729207b0a2020202020202020202020207269736b203d2022437269746963616c223b0a202020202020202020202020616374696f6e203d2022416972206b6e69666573207265717569726564223b0a20202020202020207d0a20202020202020200a202020202020202072657475726e207b207269736b3a207269736b2c20616374696f6e3a20616374696f6e207d3b0a202020207d2c0a0a202020202f2f202d2d2d20504841534520343a20494e4b205348454c46204c49464520544f4f4c532028313729202d2d2d0a0a202020202f2f20312e2053746f726167652054656d70205269736b0a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d74656d702d7269736b2d31223a2066756e6374696f6e287629207b0a202020202020202076617220617667203d207061727365466c6f617428762e6176675f74293b0a2020202020202020766172206d696e203d207061727365466c6f617428762e6f656d5f6d696e293b0a2020202020202020766172206d6178203d207061727365466c6f617428762e6f656d5f6d6178293b0a20202020202020207661722074797065203d20762e696e6b5f747970653b0a20202020202020200a20202020202020207661722064696666203d20303b0a202020202020202069662028617667203c206d696e292064696666203d206d696e202d206176673b0a202020202020202069662028617667203e206d6178292064696666203d20617667202d206d61783b0a20202020202020200a2020202020202020766172207269736b203d20224f4b223b0a20202020202020206966202864696666203e203029207269736b203d202243415554494f4e223b0a20202020202020206966202864696666203e203329207269736b203d202248494748223b0a20202020202020200a20202020202020206966202874797065203d3d3d202255562d63757261626c6522202626207269736b203d3d3d202243415554494f4e2229207269736b203d202248494748223b0a20202020202020200a202020202020202072657475726e207b207269736b3a207269736b207d3b0a202020207d2c0a0a202020202f2f20322e204649464f2026204163630a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d6669666f2d32223a2066756e6374696f6e287629207b0a2020202020202020766172206d6667203d20762e6d66675f646174653b202f2f20595959592d4d4d0a20202020202020207661722077203d207061727365466c6f617428762e77617272616e74795f6d6f293b0a20202020202020202f2f2053696d706c6520737472696e672068616e646c696e6720666f7220646174650a2020202020202020766172207061727473203d206d66672e73706c697428222d22293b0a20202020202020207661722079203d207061727365496e742870617274735b305d293b0a2020202020202020766172206d203d207061727365496e742870617274735b315d293b0a20202020202020200a20202020202020206d202b3d20773b0a20202020202020207768696c65286d203e20313229207b206d202d3d2031323b20792b2b3b207d0a20202020202020200a2020202020202020766172207573655f6279203d2079202b20222d22202b20286d203c203130203f202230222b6d203a206d293b0a20202020202020200a20202020202020202f2f205761726d75702070617273696e6720223230202f20333022206d617962653f204f7220666f726d617474656420737472696e670a20202020202020202f2f2041637475616c6c79206c6f67696320736179732022496620ce945420e289a52031302e2e2e222e20496e70757420697320737472696e673f204e6f2c206c6574277320617373756d65207573657220656e7465727320223130202f20323522207374796c65206f72206a75737420636865636b732064656c74612e0a20202020202020202f2f20576169742c20646566696e6974696f6e207361696420696e707574207479706520737472696e6720224d6f76652066726f6d202f20746f222e200a20202020202020202f2f204c657427732072656c79206f6e2073696d706c6520686575726973746963206f72206a757374206669786564207465787420696620636f6d706c65782e0a20202020202020202f2f20224578706c61696e3a20416c6c6f77207365766572616c20686f75727320696620ce945420697320626967220a20202020202020202f2f204c657427732072657475726e20746865206578706c616e6174696f6e206469726563746c792e0a20202020202020200a202020202020202072657475726e207b207573655f62793a207573655f62792c207761726d75705f7469703a2022506c616e20e289a5336820696620ce945420e289a5203130c2b04322207d3b0a202020207d2c0a0a202020202f2f20332e20524820496d706163740a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d72682d696d706163742d33223a2066756e6374696f6e287629207b0a2020202020202020766172207268203d207061727365466c6f617428762e7268293b0a20202020202020207661722066616d203d20762e696e6b5f66616d696c793b0a20202020202020200a202020202020202076617220647279203d20312e303b0a2020202020202020766172206465636170203d20312e303b0a20202020202020200a20202020202020206966202866616d2e696e6465784f66282254494a2229203e202d3129207b0a2020202020202020202020202f2f204c696e65617220617070726f782033352d3e302e382c2037352d3e312e340a202020202020202020202020647279203d20302e38202b20287268202d20333529202a2028302e36202f203430293b0a202020202020202020202020696620287268203c20343029206465636170203d20322e303b202f2f2053656e7369746976650a20202020202020207d0a20202020202020200a202020202020202072657475726e207b206472795f666163746f723a206472792e746f4669786564283229202b202278222c2064656361705f666163746f723a2064656361702e746f4669786564283229202b20227822207d3b0a202020207d2c0a0a202020202f2f20342e205556205269736b0a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d75762d7269736b2d34223a2066756e6374696f6e287629207b0a2020202020202020766172206c7578203d207061727365466c6f617428762e6c7578293b0a20202020202020207661722074203d207061727365466c6f617428762e6578706f737572655f6d696e293b0a202020202020202076617220706b67203d20762e7061636b6167696e673b0a20202020202020200a20202020202020207661722073636f7265203d20286c7578202a207429202f20313030303b0a202020202020202069662028706b672e696e6465784f6628224f70617175652229203e202d31292073636f7265202a3d20302e343b0a202020202020202069662028706b672e696e6465784f662822426c61636b2229203e202d31292073636f7265202a3d20302e363b0a202020202020202069662028706b672e696e6465784f662822436c6561722229203e202d31292073636f7265202a3d20312e323b0a20202020202020200a20202020202020207661722066696e616c203d204d6174682e6d696e283130302c204d6174682e6365696c2873636f726529293b0a202020202020202072657475726e207b2075765f73636f72653a2066696e616c202b20222f31303022207d3b0a202020207d2c0a0a202020202f2f20352e204f7269656e746174696f6e0a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d6f7269656e746174696f6e2d35223a2066756e6374696f6e287629207b0a20202020202020207661722063617274203d20762e6361727472696467653b0a2020202020202020766172207768697465203d20762e7069676d656e743b0a202020202020202076617220746970203d202255707269676874202853657074756d20557029223b0a20202020202020206966202877686974652e696e6465784f66282257686974652229203e202d312920746970202b3d2022202b205765656b6c7920526f6c6c223b0a202020202020202072657475726e207b207469703a20746970207d3b0a202020207d2c0a0a202020202f2f20362e20416769746174696f6e0a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d616769746174696f6e2d36223a2066756e6374696f6e287629207b0a20202020202020207661722062203d207061727365466c6f617428762e626f74746c6573293b0a20202020202020207661722064203d207061727365466c6f617428762e64617973293b0a202020202020202076617220706572446179203d204d6174682e6365696c2862202f2064293b0a202020202020202072657475726e207b207363686564756c653a20706572446179202b202220626f74746c65732f646179222c207369676e6f66663a2064202b202220736c6f747322207d3b0a202020207d2c0a0a202020202f2f20372e2048796769656e650a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d68796769656e652d37223a2066756e6374696f6e287629207b0a202020202020202072657475726e207b207461736b733a2022312e20436c65616e20436170207c20322e204c696e742d667265652057697065207c20332e204e6f20537469636b73207c20342e2057617374652042696e207c20352e20476c6f76657322207d3b0a202020207d2c0a0a202020202f2f20382e2041514c0a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d61716c2d38223a2066756e6374696f6e287629207b0a2020202020202020766172206c6f74203d207061727365466c6f617428762e6c6f74293b0a20202020202020202f2f2053696d706c65206c6f6f6b75702073696d756c6174696f6e0a2020202020202020766172206e203d2031303b0a20202020202020207661722063203d20303b0a2020202020202020696620286c6f74203e203130303029206e203d2038303b0a2020202020202020656c736520696620286c6f74203e2031303029206e203d2032303b0a20202020202020200a20202020202020202f2f2041514c206c6f6769632073696d706c69666965640a20202020202020207661722061716c203d207061727365466c6f617428762e61716c293b0a202020202020202063203d204d6174682e666c6f6f72286e202a2061716c202f20313030293b200a20202020202020200a202020202020202072657475726e207b206e3a206e2c20633a2063202b2022206465666563747322207d3b0a202020207d2c0a0a202020202f2f20392e20566973636f736974792044726966740a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d766973636f736974792d39223a2066756e6374696f6e287629207b0a20202020202020207661722062617365203d207061727365466c6f617428762e626173655f76697363293b0a2020202020202020766172206c6f7373203d207061727365466c6f617428762e736f6c76656e745f6c6f7373293b0a2020202020202020766172206474203d204d6174682e616273287061727365466c6f617428762e64656c74615f7429293b0a20202020202020200a202020202020202076617220764e6577203d2062617365202a202831202b20286c6f73732f313030292a3229202b20286474202a20302e31293b0a202020202020202072657475726e207b20766973633a20764e65772e746f4669786564283229207d3b0a202020207d2c0a0a202020202f2f2031302e20457661700a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d657661702d3130223a2066756e6374696f6e287629207b0a20202020202020207661722068203d207061727365466c6f617428762e72756e5f686f757273293b0a2020202020202020766172206c203d207061727365466c6f617428762e6d616b6575705f6c293b0a20202020202020207661722074203d207061727365466c6f617428762e6176675f74293b0a20202020202020200a20202020202020207661722072617465203d206c202f20683b0a20202020202020206966202874203e203235292072617465202a3d20312e323b0a20202020202020200a202020202020202072657475726e207b20657661705f696e6465783a20726174652e746f4669786564283429202b2022204c2f6822207d3b0a202020207d2c0a0a202020202f2f2031312e20466972656c6f61640a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d666972656c6f61642d3131223a2066756e6374696f6e287629207b0a2020202020202020766172206d6571203d207061727365466c6f617428762e6d65715f6c293b0a202020202020202076617220636170203d207061727365466c6f617428762e636162696e65745f636170293b0a20202020202020207661722072636170203d207061727365466c6f617428762e726f6f6d5f636170293b0a20202020202020200a20202020202020207661722073203d20224f4b223b0a2020202020202020696620286d6571203e20636170292073203d20224578636565647320436162696e657421223b0a2020202020202020696620286d6571203e2072636170292073203d20224578636565647320526f6f6d21223b0a20202020202020200a202020202020202072657475726e207b207374617475733a2073207d3b0a202020207d2c0a0a202020202f2f2031322e2044656361700a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d64656361702d3132223a2066756e6374696f6e287629207b0a20202020202020207661722066616d203d20762e696e6b5f66616d696c793b0a2020202020202020766172207268203d207061727365466c6f617428762e7268293b0a20202020202020207661722062617365203d2033303b202f2f206d696e0a20202020202020200a20202020202020206966202866616d2e696e6465784f662822617175656f75732229203e202d31292062617365203d2031353b0a2020202020202020696620287268203c203430292062617365202a3d20302e353b0a20202020202020200a202020202020202072657475726e207b2069646c655f77696e646f773a204d6174682e666c6f6f72286261736529202b2022206d696e22207d3b0a202020207d2c0a0a202020202f2f2031332e20513130205368656c66204c6966650a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d7131302d3133223a2066756e6374696f6e287629207b0a202020202020202076617220736c203d207061727365466c6f617428762e7368656c665f6d6f6e746873293b0a2020202020202020766172207472203d207061727365466c6f617428762e745f726566293b0a2020202020202020766172207461203d207061727365466c6f617428762e745f61637475616c293b0a20202020202020207661722071203d207061727365466c6f617428762e713130293b0a20202020202020200a2020202020202020766172206474203d20287461202d20747229202f2031303b0a202020202020202076617220666163746f72203d204d6174682e706f7728712c206474293b0a20202020202020207661722061646a203d20736c202f20666163746f723b0a20202020202020200a202020202020202072657475726e207b2061646a5f6d6f6e7468733a2061646a2e746f4669786564283129202b2022206d6f22207d3b0a202020207d2c0a0a202020202f2f2031342e204c6f676973746963730a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d6c6f676973746963732d3134223a2066756e6374696f6e287629207b0a20202020202020207661722072203d20762e726567696f6e3b0a20202020202020207661722063203d2022496e73756c61746564223b0a20202020202020207661722077203d20223368223b0a202020202020202069662028722e696e6465784f66282254726f706963616c2229203e202d3129207b20633d22526565666572223b20773d223668223b207d0a202020202020202072657475726e207b20636f6e74726f6c733a20632c207761726d75703a2077207d3b0a202020207d2c0a0a202020202f2f2031352e20524f490a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d726f692d3135223a2066756e6374696f6e287629207b0a202020202020202076617220636c6f6773203d207061727365466c6f617428762e636c6f6773293b0a2020202020202020766172206c61626f72203d207061727365466c6f617428762e6c61626f72293b0a2020202020202020766172207363726170203d207061727365466c6f617428762e696e6b5f7363726170293b0a20202020202020202f2f20436f737420617373756d7074696f6e733a203120636c6f67203d203168206c61626f723f0a202020202020202076617220636f7374203d2028636c6f6773202a206c61626f7229202b20287363726170202a20313030293b202f2f203130302f4c20617373756d65640a202020202020202072657475726e207b20736176696e67733a20222422202b20636f73742e746f4669786564283029207d3b0a202020207d2c0a202020200a202020202f2f2031362e204649464f204d6f6e69746f720a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d6669666f6d6f6e69746f722d3136223a2066756e6374696f6e287629207b0a20202020202020202f2f20762e6c6f747320737472696e6720223230323330312c203230323330352c20323032323132220a202020202020202076617220666c6167203d202250617373223b0a20202020202020202f2f206c6f67696320706c616365686f6c6465720a202020202020202069662028762e6c6f74732e696e6465784f662822323032342229203e202d3120262620762e6c6f74732e696e6465784f662822323032332229203e202d312920666c6167203d2022436865636b20536f7274223b0a202020202020202072657475726e207b20666c61673a20666c6167207d3b0a202020207d2c0a202020200a202020202f2f2031372e2043616c656e6461720a202020202263696a2d696e6b2d7368656c662d6c6966652d73746f726167652d63616c656e6461722d3137223a2066756e6374696f6e287629207b0a202020202020202072657475726e207b20636865636b6c6973743a20224a616e3a20467265657a65207c204a756c3a2048656174207c204f63743a205248204869676822207d3b0a202020207d2c0a0a202020202f2f202d2d2d20504841534520353a204e4f5a5a4c4520434c4f4747494e4720544f4f4c5320283829202d2d2d0a0a202020202f2f20312e204d616b652d557020506c616e6e65720a20202020226974622d6d616b6575702d706c616e6e65722d7634223a2066756e6374696f6e287629207b0a20202020202020207661722074203d207061727365466c6f617428762e74656d7043293b0a20202020202020207661722068203d207061727365466c6f617428762e686f757273293b0a2020202020202020766172206e203d20762e6e6f7a7a6c653b0a20202020202020207661722064203d207061727365466c6f617428762e64757479293b0a20202020202020207661722070203d207061727365466c6f617428762e7072696365207c7c203138293b0a20202020202020200a20202020202020202f2f204261736520636f6e73756d7074696f6e20666163746f72206b20286d6c2f682920657374696d6174696f6e0a2020202020202020766172206b203d20363b0a2020202020202020696620286e203d3d3d202236302229206b203d20383b0a2020202020202020696620286e203d3d3d202237352229206b203d2031303b0a20202020202020200a20202020202020202f2f2054656d7020666163746f723a202b35252070657220646567203e2032300a20202020202020207661722074466163746f72203d2031202b20302e3035202a202874202d203230293b0a20202020202020202f2f204475747920666163746f723a20302e3520737461746963202b20302e35202a20647574792028657661706f726174696f6e207673207573616765290a20202020202020207661722064466163746f72203d20302e35202b20302e35202a202864202f20313030293b0a20202020202020200a2020202020202020766172206d6c203d206b202a2068202a2074466163746f72202a2064466163746f723b0a202020202020202076617220636f7374203d20286d6c202f203130303029202a20703b0a20202020202020200a202020202020202072657475726e207b206d755f6573743a206d6c2e746f4669786564283029202b2022206d6c222c206275646765743a20222422202b20636f73742e746f4669786564283229207d3b0a202020207d2c0a0a202020202f2f20322e2048756d6964697479205374617469630a20202020226974622d68756d69646974792d7374617469632d7635223a2066756e6374696f6e287629207b0a2020202020202020766172207268203d207061727365466c6f617428762e7268293b0a202020202020202076617220737562203d20762e7375627374726174653b0a202020202020202076617220737064203d207061727365466c6f617428762e7370656564293b0a20202020202020200a2020202020202020766172207269736b203d20224c6f77223b0a202020202020202076617220636f756e74203d202247726f756e64696e67223b0a20202020202020200a20202020202020207661722073636f7265203d20303b0a2020202020202020696620287268203c203430292073636f7265202b3d20323b0a2020202020202020696620287375622e696e6465784f66282266696c6d2229203e202d31207c7c207375622e696e6465784f6628225045542229203e202d31292073636f7265202b3d20323b0a202020202020202069662028737064203e20313530292073636f7265202b3d20313b0a20202020202020200a20202020202020206966202873636f7265203e3d203429207b0a2020202020202020202020207269736b203d202248696768223b0a202020202020202020202020636f756e74203d202241637469766520496f6e697a657273202b2048756d6964696669636174696f6e223b0a20202020202020207d20656c7365206966202873636f7265203e3d203229207b0a2020202020202020202020207269736b203d20224d656469756d223b0a202020202020202020202020636f756e74203d2022506173736976652042727573686573202b20436865636b205248223b0a20202020202020207d0a20202020202020200a202020202020202072657475726e207b207269736b3a207269736b2c207072696d6172793a20636f756e74207d3b0a202020207d2c0a0a202020202f2f20332e2045534420456e657267790a20202020226974622d6573642d656e657267792d7633223a2066756e6374696f6e287629207b0a202020202020202076617220635f7066203d207061727365466c6f617428762e636170293b0a202020202020202076617220765f6b76203d207061727365466c6f617428762e766f6c74293b0a20202020202020200a20202020202020202f2f2045203d20302e35202a2043202a20565e320a20202020202020202f2f207046202d3e20463a202a2031652d31320a20202020202020202f2f206b56202d3e20563a202a203165330a202020202020202076617220635f66203d20635f7066202a2031652d31323b0a202020202020202076617220766f6c5f76203d20765f6b76202a20313030303b0a20202020202020200a2020202020202020766172206a203d20302e35202a20635f66202a204d6174682e706f7728766f6c5f762c2032293b0a2020202020202020766172206d6a203d206a202a20313030303b0a20202020202020200a202020202020202072657475726e207b20656e657267793a206d6a2e746f4669786564283229202b2022206d4a22207d3b0a202020207d2c0a0a202020202f2f20342e20537461727475702054696d65720a20202020226974622d737461727475702d74696d65722d7632223a2066756e6374696f6e287629207b0a20202020202020207661722074656368203d20762e746563683b0a20202020202020207661722073203d207061727365466c6f617428762e7365636f6e6473293b0a2020202020202020766172206c696d6974203d202874656368203d3d3d202254494a2229203f203330203a203138303b0a20202020202020200a202020202020202076617220737461747573203d202873203c3d206c696d697429203f20225061737322203a20224641494c20284c61746529223b0a202020202020202072657475726e207b20666c61673a20737461747573207d3b0a202020207d2c0a0a202020202f2f20352e2053687574646f776e20436f6d706c69616e63650a20202020226974622d73687574646f776e2d636f6d706c69616e63652d7633223a2066756e6374696f6e287629207b0a202020202020202076617220746f74203d207061727365466c6f617428762e73746f7073293b0a202020202020202076617220636c6e203d207061727365466c6f617428762e636c65616e73746f7073293b0a20202020202020200a202020202020202069662028746f74203d3d3d2030292072657475726e207b207063743a20223025222c20666c61673a20222d22207d3b0a20202020202020200a20202020202020207661722070203d2028636c6e202f20746f7429202a203130303b0a20202020202020207661722066203d2022476f6f64223b0a20202020202020206966202870203c203938292066203d20225761726e696e67223b0a20202020202020206966202870203c203935292066203d20225269736b223b0a20202020202020200a202020202020202072657475726e207b207063743a20702e746f4669786564283129202b202225222c20666c61673a2066207d3b0a202020207d2c0a0a202020202f2f20362e2046696c746572204c6966650a20202020226974622d66696c7465722d6c6966652d7633223a2066756e6374696f6e287629207b0a20202020202020207661722062203d207061727365466c6f617428762e62617365293b0a2020202020202020766172206e203d207061727365466c6f617428762e6e6f77293b0a20202020202020207661722068203d207061727365466c6f617428762e686f757273293b0a20202020202020200a20202020202020202f2f204c6f616420250a2020202020202020766172206c6f6164203d20303b0a2020202020202020696620286e203e206229206c6f6164203d20286e202d206229202f2028313030202d206229202a203130303b0a20202020202020200a202020202020202076617220616476203d20224f4b223b0a2020202020202020696620286c6f6164203e203730207c7c2068203e20323030302920616476203d2022506c616e204368616e6765223b0a2020202020202020696620286c6f6164203e203930207c7c2068203e20333030302920616476203d20224348414e4745204e4f57223b0a20202020202020200a202020202020202072657475726e207b206c6f61643a206c6f61642e746f4669786564283029202b202225222c206164766963653a20616476207d3b0a202020207d2c0a0a202020202f2f20372e204b5049204d696e690a20202020226974622d6b70692d6d696e692d7633223a2066756e6374696f6e287629207b0a20202020202020207661722073746f7073203d207061727365466c6f617428762e73746f7073293b0a202020202020202076617220636c65616e203d207061727365466c6f617428762e636c65616e293b0a20202020202020207661722074203d207061727365466c6f617428762e7465737473293b0a20202020202020207661722070203d207061727365466c6f617428762e70617373293b0a2020202020202020766172206d75203d207061727365466c6f617428762e6d75293b0a2020202020202020766172206d7562203d207061727365466c6f617428762e6d755f62617365293b0a20202020202020200a2020202020202020766172206373203d202873746f7073203e203029203f2028636c65616e2f73746f7073292a313030203a20303b0a2020202020202020766172206670203d202874203e203029203f2028702f74292a313030203a20303b0a2020202020202020766172206472203d20286d7562203e203029203f2028286d75202d206d7562292f6d7562292a313030203a20303b0a20202020202020200a202020202020202072657475726e207b0a20202020202020202020202063733a2063732e746f4669786564283129202b202225222c0a20202020202020202020202066703a2066702e746f4669786564283129202b202225222c0a20202020202020202020202064726966743a20286472203e2030203f20222b22203a20222229202b2064722e746f4669786564283129202b202225220a20202020202020207d3b0a202020207d2c0a0a202020202f2f20382e2053454f2044656e736974790a20202020226974622d73656f2d64656e736974792d7631223a2066756e6374696f6e287629207b0a202020202020202076617220746f74203d207061727365466c6f617428762e746f74616c5f776f726473293b0a2020202020202020766172206f6363203d207061727365466c6f617428762e6f6363757273293b0a20202020202020200a20202020202020207661722064203d20286f6363202f20746f7429202a203130303b0a20202020202020207661722073203d20224c6f77223b0a20202020202020206966202864203e3d20302e352026262064203c3d20322e35292073203d2022476f6f6420287e312529223b0a20202020202020206966202864203e20322e35292073203d20224869676820285374756666696e673f29223b0a20202020202020200a202020202020202072657475726e207b2064656e736974793a20642e746f4669786564283229202b202225222c207374617475733a2073207d3b0a202020207d2c0a0a202020202f2f202d2d2d20504841534520363a20436f6d70617469626c65207673204f454d20466c75696473202d2d2d0a202020202f2f20312e2054434f0a202020202263696a2d636f6d70617469626c652d76732d6f656d2d74636f2d31223a2066756e6374696f6e287629207b0a2020202020202020766172206962203d207061727365466c6f617428762e696e6b5f6275726e29207c7c20303b0a2020202020202020766172206d62203d207061727365466c6f617428762e6d616b6575705f6275726e29207c7c20303b0a2020202020202020766172206872203d207061727365466c6f617428762e6c696e655f686f75727329207c7c20303b0a20202020202020200a2020202020202020766172206c5f696e6b203d206962202a206872202f20313030302e303b0a2020202020202020766172206c5f6d75203d206d62202a206872202f20313030302e303b0a20202020202020200a2020202020202020766172206576656e7473203d207061727365466c6f617428762e6576656e747329207c7c20303b0a2020202020202020766172206368675f74696d65203d207061727365466c6f617428762e6368675f74696d6529207c7c20303b0a20202020202020207661722064745f636f7374203d207061727365466c6f617428762e64745f636f737429207c7c20303b0a202020202020202076617220636f73745f636867203d206576656e7473202a206368675f74696d65202a2064745f636f73743b0a20202020202020200a2020202020202020766172206661696c5f6f656d203d203132202a20287061727365466c6f617428762e6661696c5f70726f625f6f656d297c7c3029202a20302e3031202a20287061727365466c6f617428762e6661696c5f696d70616374297c7c30293b0a2020202020202020766172206661696c5f636f6d70203d203132202a20287061727365466c6f617428762e6661696c5f70726f625f636f6d70297c7c3029202a20302e3031202a20287061727365466c6f617428762e6661696c5f696d70616374297c7c30293b0a20202020202020200a202020202020202076617220636f73745f6f656d203d20286c5f696e6b202a20287061727365466c6f617428762e696e6b5f70726963655f6f656d297c7c302929202b20286c5f6d75202a20287061727365466c6f617428762e6d616b6575705f70726963655f6f656d297c7c302929202b20636f73745f636867202b206661696c5f6f656d3b0a202020202020202076617220636f73745f636f6d70203d20286c5f696e6b202a20287061727365466c6f617428762e696e6b5f70726963655f636f6d70297c7c302929202b20286c5f6d75202a20287061727365466c6f617428762e6d616b6575705f70726963655f636f6d70297c7c302929202b20636f73745f636867202b206661696c5f636f6d703b0a20202020202020200a202020202020202072657475726e207b0a20202020202020202020202074636f5f6f656d3a20636f73745f6f656d2e746f46697865642830292c0a20202020202020202020202074636f5f636f6d703a20636f73745f636f6d702e746f46697865642830292c0a20202020202020202020202064656c74613a2028636f73745f6f656d202d20636f73745f636f6d70292e746f46697865642830290a20202020202020207d3b0a202020207d2c0a0a202020202f2f20322e2053746162696c697479204c6f676765720a202020202263696a2d6a65742d73746162696c6974792d6c6f67676572223a2066756e6374696f6e287629207b0a202020202020202076617220766f6c74616765203d204d6174682e616273287061727365466c6f617428762e766f6c74616765297c7c30293b0a2020202020202020766172206d755f72617465203d207061727365466c6f617428762e6d755f7261746529207c7c20303b0a202020202020202076617220636c65616e73203d207061727365466c6f617428762e636c65616e7329207c7c20303b0a20202020202020207661722072657374617274203d207061727365466c6f617428762e7265737461727429207c7c20303b0a20202020202020200a202020202020202076617220666c6167203d2022477265656e223b0a2020202020202020766172206e6f7465203d2022537461626c65206f7065726174696f6e223b0a20202020202020200a202020202020202069662028766f6c74616765203e3d2035207c7c206d755f72617465203e3d20313030207c7c20636c65616e73203e2036207c7c2072657374617274203c20393829207b0a202020202020202020202020666c6167203d2022416d626572223b0a2020202020202020202020206e6f7465203d20224d6f6e69746f7220636c6f73656c793b207665726966792066696c74726174696f6e223b0a20202020202020207d0a202020202020202069662028766f6c74616765203e3d203130207c7c206d755f72617465203e3d20313530207c7c20636c65616e73203e203130207c7c2072657374617274203c20393029207b0a202020202020202020202020666c6167203d2022526564223b0a2020202020202020202020206e6f7465203d20224f7574206f6620737065633a2053746f70202620466978223b0a20202020202020207d0a20202020202020200a202020202020202072657475726e207b20666c61673a20666c61672c206e6f74653a206e6f7465207d3b0a202020207d2c0a0a202020202f2f203d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a202020202f2f20504841534520373a20534f4c56454e54205341464554592026204d53445320544f4f4c53202839204974656d73290a202020202f2f203d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a0a202020202f2f20312e2053445320436f6d706c6574656e6573732056616c696461746f7220285472616e73706f727420466f637573290a20202020227364732d636f6d706c6574656e6573732d76616c696461746f722d7472616e73706f72742d666f637573223a2066756e6374696f6e28696e7075747329207b0a202020202020202076617220756e203d2028696e707574732e756e207c7c202222292e7472696d28293b0a20202020202020207661722070736e203d2028696e707574732e70736e207c7c202222292e7472696d28293b0a202020202020202076617220636c73203d2028696e707574732e636c617373207c7c202222292e7472696d28293b0a2020202020202020766172207067203d20696e707574732e7067207c7c2022223b0a202020202020202076617220616972203d20696e707574732e616972207c7c20224e6f223b0a20202020202020207661722073636f7265203d20303b0a20202020202020207661722067617073203d205b5d3b0a202020202020202076617220616476696365203d2022526561647920746f207265766965772e223b0a0a2020202020202020696628756e292073636f7265202b3d2032303b20656c736520676170732e707573682822554e204e756d62657222293b0a202020202020202069662870736e292073636f7265202b3d2032303b20656c736520676170732e70757368282250534e22293b0a2020202020202020696628636c73292073636f7265202b3d2032303b20656c736520676170732e707573682822436c61737322293b0a20202020202020206966287067292073636f7265202b3d2032303b20656c736520676170732e7075736828225061636b696e672047726f757022293b0a2020202020202020696628696e707574732e726576292073636f7265202b3d2032303b20656c736520676170732e7075736828225265766973696f6e204461746522293b0a0a2020202020202020696628616972203d3d3d202259657322202626202821756e207c7c20756e2e746f4c6f776572436173652829203d3d3d20226e6122207c7c20756e2e746f4c6f776572436173652829203d3d3d20226e6f7420726567756c61746564222929207b0a202020202020202020202020616476696365203d2022435249544943414c3a2041697220736869706d656e7420726571756972657320554e206e756d6265722e20274e6f7420526567756c617465642720697320726172656c792076616c696420666f722043494a20736f6c76656e7473206279206169722e223b0a20202020202020207d20656c73652069662873636f7265203d3d3d2031303029207b0a202020202020202020202020616476696365203d20225344532061707065617273207374727563747572616c6c7920636f6d706c65746520666f72207472616e73706f72742e223b0a20202020202020207d20656c7365207b0a202020202020202020202020616476696365203d202246696c6c206d697373696e67206669656c6473206265666f726520626f6f6b696e6720667265696768742e223b0a20202020202020207d0a0a202020202020202072657475726e207b0a20202020202020202020202073636f72653a2073636f7265202b202225222c0a202020202020202020202020676170733a20676170732e6c656e677468203f20676170732e6a6f696e28222c202229203a20224e6f6e65222c0a2020202020202020202020206164766963653a206164766963650a20202020202020207d3b0a202020207d2c0a0a202020202f2f20322e204d69787475726520466c61736820506f696e7420457374696d61746f722028456475636174696f6e616c290a20202020226d6978747572652d666c6173682d706f696e742d657374696d61746f722d656475636174696f6e616c223a2066756e6374696f6e28696e7075747329207b0a202020202020202076617220667031203d207061727365466c6f617428696e707574732e66703129207c7c20303b0a2020202020202020766172207731203d207061727365466c6f617428696e707574732e773129207c7c20303b0a202020202020202076617220667032203d207061727365466c6f617428696e707574732e66703229207c7c20303b0a2020202020202020766172207732203d207061727365466c6f617428696e707574732e773229207c7c20303b0a20202020202020200a20202020202020202f2f205665727920726f75676820226c6f7765737420666c61736820706f696e7420646f6d696e6174657322206865757269737469630a202020202020202076617220657374203d204d6174682e6d696e286670312c20667032293b0a20202020202020200a20202020202020202f2f20496620746865206c6f77657220465020636f6d706f6e656e74206973203c20313025206d6173732c206d617962652069742072697365733f200a20202020202020202f2f20466f72207361666574792f747261696e696e672c20776520737469636b20746f2022666c61736820706f696e742069732064657465726d696e656420627920746865206d6f737420766f6c6174696c6520636f6d706f6e656e74222e0a20202020202020200a202020202020202072657475726e207b0a20202020202020202020202066705f6d69783a20227e22202b206573742e746f4669786564283129202b2022205c7530306230432028457374696d61746529222c0a2020202020202020202020206361766561743a202254686973206973206120547261696e696e672056616c75652e2041637475616c204650206d7573742062652074657374656420284153544d20443933292e220a20202020202020207d3b0a202020207d2c0a0a202020202f2f20332e205047202620504920417373697374616e742028547261696e696e6720416964290a202020202270672d70692d617373697374616e742d747261696e696e672d616964223a2066756e6374696f6e28696e7075747329207b0a2020202020202020766172206670203d207061727365466c6f617428696e707574732e667029207c7c20303b0a202020202020202076617220696270203d207061727365466c6f617428696e707574732e69627029207c7c20303b0a202020202020202076617220616972203d20696e707574732e616972207c7c20224e6f223b0a20202020202020200a2020202020202020766172207067203d2022556e6b6e6f776e223b0a2020202020202020696628696270203c3d20333529207b0a2020202020202020202020207067203d2022492028486967682044616e67657229223b0a20202020202020207d20656c7365206966286670203c20323329207b0a2020202020202020202020207067203d2022494920284d656469756d2044616e67657229223b0a20202020202020207d20656c7365206966286670203e3d203233202626206670203c3d20363029207b0a2020202020202020202020207067203d202249494920284c6f772044616e67657229223b0a20202020202020207d20656c7365206966286670203e20363029207b0a2020202020202020202020207067203d20224e6f6e2d44472028756e6c6573732068656174656429223b0a20202020202020207d0a20202020202020200a20202020202020207661722068696e74203d20222d223b0a2020202020202020696628616972203d3d3d20225965732229207b0a20202020202020202020202069662870672e696e636c756465732822492229292068696e74203d2022466f7262696464656e206f6e205061783f20436865636b205049203358582e223b0a20202020202020202020202069662870672e696e636c75646573282249492229292068696e74203d20224c696b656c7920504920333533202850617829202f203336342028436172676f292e223b0a20202020202020202020202069662870672e696e636c7564657328224949492229292068696e74203d20224c696b656c7920504920333535202850617829202f203336362028436172676f292e223b0a20202020202020207d0a20202020202020200a202020202020202072657475726e207b0a20202020202020202020202070675f67756573733a2070672c0a2020202020202020202020206169725f68696e743a2068696e742c0a2020202020202020202020206e6578743a202256657269667920616761696e737420737065636966696320554e20656e74727920696e2049415441204447522e220a20202020202020207d3b0a202020207d2c0a0a202020202f2f20342e20444450204c5120456c69676962696c69747920436865636b65720a20202020226464702d6c712d656c69676962696c6974792d636865636b65722d6169722d7365612d726f6164223a2066756e6374696f6e28696e7075747329207b0a2020202020202020766172206d6f6465203d20696e707574732e6d6f6465207c7c202241697220284941544129223b0a202020202020202076617220696e6e6572203d207061727365466c6f617428696e707574732e696e6e65725f766f6c29207c7c20303b0a20202020202020207661722067726f7373203d207061727365466c6f617428696e707574732e67726f737329207c7c20303b0a2020202020202020766172207067203d20696e707574732e7067207c7c20224949223b0a20202020202020200a202020202020202076617220656c696769626c65203d20224c696b656c79204e4f223b0a202020202020202076617220726571203d202246756c6c20444720436c6173732033204c6162656c73202b20506170657273223b0a202020202020202076617220646f63203d2022536869707065722773204465636c61726174696f6e202844474429223b0a20202020202020200a20202020202020206966286d6f64652e696e636c756465732822416972222929207b0a2020202020202020202020202f2f20416972204c5120757375616c6c79206c696d697420314c2028504720494929206f722031304c2028504720494949292070657220696e6e65723f200a2020202020202020202020202f2f2042726f61642072756c653a205047204949206f6674656e20314c20696e6e6572202f2033306b67207061636b616765202859205049292e0a202020202020202020202020766172206d6178496e6e6572203d20287067203d3d3d202249492229203f2031303030203a2028287067203d3d3d20224949492229203f2035303030203a2030293b202f2f206d4c0a202020202020202020202020696628696e6e6572203c3d206d6178496e6e65722026262067726f7373203c3d20333029207b0a20202020202020202020202020202020656c696769626c65203d20225965732028592d5061636b29223b0a20202020202020202020202020202020726571203d2022275927204c51204d61726b202b20436c6173732033204c6162656c202b20554e204944223b0a20202020202020202020202020202020646f63203d202244474420526571756972656420284e61747572652026205174793a20274c5444205154592729223b0a2020202020202020202020207d20656c7365207b0a20202020202020202020202020202020656c696769626c65203d20224e6f2028546f6f206c617267652f5047204929223b0a2020202020202020202020207d0a20202020202020207d20656c736520696620286d6f64652e696e636c7564657328225365612229207c7c206d6f64652e696e636c756465732822526f6164222929207b0a2020202020202020202020202f2f20494d44472f414452206f6674656e20354c20696e6e6572202f2033306b672067726f737320666f7220436c61737320332050472049492f4949490a202020202020202020202020766172206d6178496e6e6572536561203d20353030303b200a202020202020202020202020696628696e6e6572203c3d206d6178496e6e65725365612026262067726f7373203c3d20333029207b0a20202020202020202020202020202020656c696769626c65203d2022596573223b0a20202020202020202020202020202020726571203d20224c51204d61726b20284469616d6f6e6429223b0a20202020202020202020202020202020646f63203d20286d6f64652e696e636c756465732822536561222929203f20224447204d616e696665737422203a2022436865636b696e67206578656d7074696f6e732e2e2e223b0a2020202020202020202020207d0a20202020202020207d0a20202020202020200a202020202020202072657475726e207b0a202020202020202020202020656c69673a20656c696769626c652c0a2020202020202020202020207265713a207265712c0a202020202020202020202020646f633a20646f632c0a2020202020202020202020206e6f7465733a20224d7573742075736520636f6d62696e6174696f6e207061636b6167696e672e220a20202020202020207d3b0a202020207d2c0a0a202020202f2f20352e20554e20426f78204d61726b204465636f6465720a2020202022756e2d626f782d6d61726b2d6465636f646572223a2066756e6374696f6e28696e7075747329207b0a2020202020202020766172206d61726b203d2028696e707574732e6d61726b207c7c202222292e7472696d28293b0a20202020202020202f2f20666f726d61743a20554e2034472f5933302f532f32352f5553412f4d343436300a20202020202020202f2f20636c65616e2075700a20202020202020206d61726b203d206d61726b2e7265706c616365282f5e756e5c732b2f692c202222293b0a2020202020202020766172207061727473203d206d61726b2e73706c697428222f22293b0a20202020202020200a20202020202020207661722074797065203d2070617274735b305d207c7c20223f223b0a20202020202020207661722070657266203d2070617274735b315d207c7c20223f223b0a202020202020202076617220736f6c6964203d2070617274735b325d207c7c20223f223b0a20202020202020207661722079656172203d2070617274735b335d207c7c20223f223b0a20202020202020200a20202020202020207661722070674c6576656c203d20223f223b0a2020202020202020696628706572662e746f55707065724361736528292e737461727473576974682822582229292070674c6576656c203d2022582028504720492c2049492c2049494929223b0a2020202020202020656c736520696628706572662e746f55707065724361736528292e737461727473576974682822592229292070674c6576656c203d202259202850472049492c2049494929223b0a2020202020202020656c736520696628706572662e746f55707065724361736528292e7374617274735769746828225a2229292070674c6576656c203d20225a2028504720494949206f6e6c7929223b0a20202020202020200a202020202020202072657475726e207b0a202020202020202020202020747970653a2074797065202b20222028652e672e204669626572626f61726420426f7829222c0a20202020202020202020202070673a2070674c6576656c2c0a2020202020202020202020206c696d69743a20706572662e7265706c616365282f5b78797a5d2f692c20222229202b2022206b67202847726f7373204d61737329222c0a2020202020202020202020206e6f7465733a2022536f6c6964732f496e6e6572205061636b20666c61673a2022202b20736f6c69640a20202020202020207d3b0a202020207d2c0a0a202020202f2f20362e20436c6f7375726520496e737472756374696f6e205265636f726465720a2020202022636c6f737572652d696e737472756374696f6e2d7265636f72646572223a2066756e6374696f6e28696e7075747329207b0a202020202020202076617220626f78203d20696e707574732e626f78207c7c2022223b0a20202020202020207661722074617065203d20696e707574732e74617065207c7c2022223b0a202020202020202076617220746f72717565203d20696e707574732e746f72717565207c7c2022223b0a20202020202020200a202020202020202072657475726e207b0a20202020202020202020202073756d6d6172793a2022426f783a2022202b20626f78202b2022207c20546170653a2022202b2074617065202b2022207c20546f727175653a2022202b20746f72717565202b2022204e6d2e2050686f746f2065766964656e63652072657175697265642e220a20202020202020207d3b0a202020207d2c0a0a202020202f2f20372e204c6162656c20506c616e6e657220284f7665727061636b204177617265290a20202020226c6162656c2d706c616e6e65722d6f7665727061636b2d6177617265223a2066756e6374696f6e28696e7075747329207b0a2020202020202020766172206d6f6465203d20696e707574732e6d6f6465207c7c2022416972223b0a2020202020202020766172206c71203d20696e707574732e6c71207c7c20224e6f223b0a2020202020202020766172206f7670203d20696e707574732e6f7665727061636b207c7c20224e6f223b0a20202020202020200a20202020202020207661722072657173203d205b5d3b0a20202020202020206966286d6f6465203d3d3d20224169722229207b0a2020202020202020202020206966286c712e696e636c75646573282259657322292920726571732e707573682822592d4c51204d61726b22293b0a202020202020202020202020726571732e707573682822436c6173732033204c6162656c22293b0a202020202020202020202020726571732e707573682822554e204e756d626572202b2050534e22293b0a202020202020202020202020726571732e707573682822536869707065722f436f6e7369676e6565204164647222293b0a202020202020202020202020726571732e7075736828224f7269656e746174696f6e204172726f777322293b0a20202020202020207d20656c7365207b0a2020202020202020202020206966286c712e696e636c75646573282259657322292920726571732e7075736828224c51204d61726b2028506c61696e2922293b0a202020202020202020202020656c7365207b0a20202020202020202020202020202020726571732e707573682822436c6173732033204c6162656c22293b0a20202020202020202020202020202020726571732e707573682822554e204e756d62657222293b0a2020202020202020202020207d0a20202020202020207d0a20202020202020200a202020202020202076617220706c616365203d2022566572746963616c20666163652c206e6f742063726f7373696e6720656467652e223b0a20202020202020206966286f7670203d3d3d20225965732229207b0a202020202020202020202020706c616365202b3d2022204d555354206475706c696361746520616c6c206c6162656c73206f6e204f7665727061636b206f75746572202b20274f5645525041434b2720746578742e223b0a20202020202020207d0a20202020202020200a202020202020202072657475726e207b0a20202020202020202020202072657175697265643a20726571732e6a6f696e2822202b2022292c0a202020202020202020202020706c6163656d656e743a20706c6163652c0a2020202020202020202020207072696e743a2022436865636b2073697a652028313030783130306d6d29220a20202020202020207d3b0a202020207d2c0a0a202020202f2f20382e20444744204669656c642056616c696461746f720a20202020226467642d6669656c642d76616c696461746f72223a2066756e6374696f6e28696e7075747329207b0a202020202020202076617220756e203d20696e707574732e756e207c7c2022223b0a2020202020202020766172207067203d20696e707574732e7067207c7c2022223b0a202020202020202076617220696e6e6572203d207061727365466c6f617428696e707574732e696e6e657229207c7c20303b0a20202020202020200a202020202020202076617220697373756573203d205b5d3b0a202020202020202069662821756e2e746f55707065724361736528292e737461727473576974682822554e222929206973737565732e707573682822554e2320666f726d617422293b0a2020202020202020696628696e6e6572203e203530303029206973737565732e707573682822496e6e657220766f6c206869676820283e354c2922293b0a20202020202020200a202020202020202072657475726e207b0a2020202020202020202020206572726f72733a206973737565732e6c656e677468203f206973737565732e6a6f696e28222c202229203a20224e6f6e65206f6276696f7573222c0a2020202020202020202020206669783a206973737565732e6c656e677468203f202252657669657720616761696e7374204941544120504922203a202250726f6365656420746f207369676e222c0a2020202020202020202020206e6f7465733a202252657461696e20636f707920666f722032207965617273220a20202020202020207d3b0a202020207d2c0a0a202020202f2f20392e2044445020436f7374696e6720457374696d61746f72202844472d6177617265290a20202020226464702d636f7374696e672d657374696d61746f722d64672d6177617265223a2066756e6374696f6e28696e7075747329207b0a20202020202020207661722066203d207061727365466c6f617428696e707574732e6672656967687429207c7c20303b0a2020202020202020766172206467203d207061727365466c6f617428696e707574732e646766656529207c7c20303b0a2020202020202020766172207061636b203d207061727365466c6f617428696e707574732e7061636b29207c7c20303b0a20202020202020207661722063757374203d207061727365466c6f617428696e707574732e637573746f6d7329207c7c20303b0a2020202020202020766172207269736b203d207061727365466c6f617428696e707574732e7269736b29207c7c20303b0a20202020202020200a202020202020202076617220737562203d2066202b206467202b207061636b202b20637573743b0a202020202020202076617220627566666572203d20737562202a20287269736b202f20313030293b0a202020202020202076617220746f74616c203d20737562202b206275666665723b0a20202020202020200a202020202020202072657475726e207b0a2020202020202020202020206464703a20222422202b20746f74616c2e746f46697865642832292c0a2020202020202020202020206275666665723a20222422202b206275666665722e746f46697865642832292c0a2020202020202020202020206e6f7465733a2022496e636c756465732022202b207269736b202b20222520636f6e74696e67656e63792e220a20202020202020207d3b0a202020207d2c0a0a202020202f2f20332e205269736b20436865636b65720a202020202263696a2d636f6d70617469626c652d76732d6f656d2d7269736b2d32223a2066756e6374696f6e287629207b0a20202020202020207661722063726974203d20762e637269746963616c697479207c7c2022223b0a2020202020202020766172206677203d20762e66775f706f6c696379207c7c2022223b0a202020202020202076617220656e76203d20762e656e76207c7c2022223b0a2020202020202020766172207161203d20762e737570706c696572207c7c2022223b0a20202020202020200a20202020202020207661722073636f7265203d20313b202f2f20546965722031202850696c6f74290a20202020202020206966202863726974203d3d3d20225a65726f2d6661696c22207c7c2063726974203d3d3d20224869676822292073636f7265202b3d20313b0a2020202020202020696620286677203d3d3d20224175746f22292073636f7265202b3d20313b0a202020202020202069662028656e76203d3d3d2022436f6c642f636f6e64656e736174696f6e22207c7c20656e76203d3d3d20224f696c7922292073636f7265202b3d20313b0a2020202020202020696620287161203d3d3d2022556e6b6e6f776e22207c7c207161203d3d3d20225061727469616c2028434f41206f6e6c792922292073636f7265202b3d20313b0a20202020202020200a20202020202020207661722074696572203d2022546965722022202b204d6174682e6d696e2873636f72652c2034293b0a2020202020202020766172206e6f7465203d202250696c6f7420616c6c6f776564223b0a20202020202020206966202873636f7265203e3d203429206e6f7465203d20224b656570204f454d223b0a2020202020202020656c7365206966202873636f7265203d3d3d203329206e6f7465203d2022467265657a652046572c207468656e2050696c6f74223b0a20202020202020200a202020202020202072657475726e207b20746965723a20746965722c206e6f74653a206e6f7465207d3b0a202020207d2c0a0a202020202f2f20342e20426172636f64652047726164650a2020202022626172636f64652d67726164652d717569636b636865636b223a2066756e6374696f6e287629207b0a20202020202020207661722071203d20762e7175696574207c7c2022596573223b0a20202020202020206966202871203d3d3d20224e6f22292072657475726e207b2067726164653a2022312e30222c207269736b3a20224869676820285175696574205a6f6e652076696f6c6174696f6e2922207d3b0a20202020202020200a20202020202020207661722063203d207061727365466c6f617428762e636f6e747261737429207c7c20303b0a2020202020202020766172206d203d207061727365466c6f617428762e6d6f6429207c7c20303b0a20202020202020200a20202020202020202f2f204865757269737469633a20477261646520617070726f782028436f6e74726173742f3235202b204d6f64756c65292f3220636c616d70656420302e2e340a20202020202020202f2f20436f6e747261737420697320252c20652e672e2c2038302e2038302f3235203d20332e322e0a20202020202020207661722067203d20282863202f2032352e3029202b206d29202f20322e303b0a20202020202020206966202867203e2034292067203d20343b0a20202020202020206966202867203c2030292067203d20303b0a20202020202020200a2020202020202020766172207269736b203d20224c6f77223b0a20202020202020206966202867203c20322e3529207269736b203d20224d656469756d223b0a20202020202020206966202867203c20312e3529207269736b203d202248696768223b0a20202020202020200a202020202020202072657475726e207b2067726164653a20672e746f46697865642831292c207269736b3a207269736b207d3b0a202020207d2c0a0a202020202f2f20352e20534453204c6f676765720a20202020227364732d657863757273696f6e2d6c6f67676572223a2066756e6374696f6e287629207b0a20202020202020207661722074656d70203d207061727365466c6f617428762e74656d70297c7c303b0a202020202020202076617220647572203d207061727365466c6f617428762e686f757273297c7c303b0a20202020202020207661722062616e64203d20762e62616e64207c7c202241223b0a20202020202020200a20202020202020202f2f2050617273652062616e64206c696d6974730a2020202020202020766172206d617854203d2032353b0a20202020202020206966202862616e642e696e6465784f66282242222920213d3d202d3129206d617854203d2033353b0a20202020202020206966202862616e642e696e6465784f66282243222920213d3d202d3129206d617854203d2034353b0a20202020202020200a20202020202020207661722064696666203d2074656d70202d206d6178543b0a202020202020202076617220616374696f6e203d20224f4b20746f20757365223b0a2020202020202020766172206e6f7465203d202257697468696e207370656373223b0a20202020202020200a20202020202020206966202864696666203e203520262620647572203e20323429207b0a202020202020202020202020616374696f6e203d202253616d706c65205141223b0a2020202020202020202020206e6f7465203d2022457863757273696f6e203e354320666f72203e323468223b0a20202020202020207d20656c7365206966202864696666203e203029207b0a202020202020202020202020616374696f6e203d2022496e7370656374207365616c73223b0a2020202020202020202020206e6f7465203d20224d696e6f7220657863757273696f6e223b0a20202020202020207d0a20202020202020200a202020202020202072657475726e207b20616374696f6e3a20616374696f6e2c206e6f74653a206e6f7465207d3b0a202020207d2c0a0a202020202f2f20362e2050696c6f7420476174650a202020202270696c6f742d676174652d63616c63756c61746f72223a2066756e6374696f6e287629207b0a2020202020202020766172207570203d207061727365466c6f617428762e757074696d6529207c7c20303b0a202020202020202076617220636c203d207061727365466c6f617428762e636c65616e7329207c7c20303b202f2f2044656c7461207673204f454d0a2020202020202020766172206772203d207061727365466c6f617428762e677261646529207c7c20303b202f2f2044656c74612067726164650a2020202020202020766172206d75203d207061727365466c6f617428762e6d7529207c7c20303b202f2f204d616b652d75702064656c746120250a2020202020202020766172206677203d207061727365466c6f617428762e667729207c7c20303b0a20202020202020200a2020202020202020766172206465636973696f6e203d20225363616c65223b0a202020202020202076617220726561736f6e203d2022416c6c20676174657320706173736564223b0a20202020202020200a2020202020202020696620287570203c2039392e3529207b206465636973696f6e203d2022526576657274223b20726561736f6e203d2022557074696d65203c2039392e3525223b207d0a2020202020202020656c73652069662028636c203e203029207b206465636973696f6e203d2022457874656e64223b20726561736f6e203d2022486561642d636c65616e7320696e63726561736564223b207d0a2020202020202020656c736520696620284d6174682e61627328677229203e20302e3329207b206465636973696f6e203d2022526576657274223b20726561736f6e203d20224772616465206472696674203e20302e33223b207d0a2020202020202020656c736520696620284d6174682e616273286d7529203e203529207b206465636973696f6e203d2022457874656e64223b20726561736f6e203d20224d616b652d7570206275726e20756e737461626c65223b207d0a2020202020202020656c736520696620286677203e203029207b206465636973696f6e203d20225265766572742f467265657a65223b20726561736f6e203d20224669726d77617265206661756c7473206465746563746564223b207d0a20202020202020200a202020202020202072657475726e207b206465636973696f6e3a206465636973696f6e2c20726561736f6e3a20726561736f6e207d3b0a202020207d2c0a0a202020202f2f20372e204d697820506c616e6e65720a20202020226d69782d706c616e6e6572223a2066756e6374696f6e287629207b0a2020202020202020766172206c6f203d207061727365466c6f617428762e6c696e65735f6f656d297c7c303b0a2020202020202020766172206c63203d207061727365466c6f617428762e6c696e65735f636f6d70297c7c303b0a2020202020202020766172206c68203d207061727365466c6f617428762e6c696e65735f687962726964297c7c303b0a20202020202020200a2020202020202020766172206275726e203d207061727365466c6f617428762e6176675f6275726e297c7c303b0a202020202020202076617220686f757273203d207061727365466c6f617428762e686f757273297c7c303b0a202020202020202076617220706f203d207061727365466c6f617428762e70726963655f6f656d297c7c303b0a2020202020202020766172207063203d207061727365466c6f617428762e70726963655f636f6d70297c7c303b0a20202020202020200a202020202020202076617220726f203d207061727365466c6f617428762e7269736b5f6f656d297c7c313b0a2020202020202020766172207263203d207061727365466c6f617428762e7269736b5f636f6d70297c7c323b0a2020202020202020766172207268203d207061727365466c6f617428762e7269736b5f687962726964297c7c323b0a20202020202020200a2020202020202020766172206c5f7065725f6c696e65203d206275726e202a20686f757273202f20313030302e303b0a2020202020202020766172206f656d5f636f7374203d206c6f202a206c5f7065725f6c696e65202a20706f3b0a202020202020202076617220636f6d705f636f7374203d20286c63202b206c6829202a206c5f7065725f6c696e65202a2070633b0a20202020202020200a202020202020202076617220627564676574203d206f656d5f636f7374202b20636f6d705f636f73743b0a20202020202020200a202020202020202076617220746f74616c5f6c696e6573203d206c6f202b206c63202b206c683b0a20202020202020207661722073636f7265203d20746f74616c5f6c696e6573203e2030203f2028286c6f2a726f202b206c632a7263202b206c682a7268292f746f74616c5f6c696e657329203a20303b0a20202020202020200a202020202020202072657475726e207b206275646765743a206275646765742e746f46697865642830292c2073636f72653a2073636f72652e746f4669786564283129207d3b0a202020207d2c0a0a202020202f2f20382e204b50492044617368626f6172640a20202020226b70692d64617368626f6172642d736b65746368223a2066756e6374696f6e287629207b0a202020202020202076617220766f6c74203d20762e766f6c743b0a2020202020202020766172206d75203d20762e6d753b0a202020202020202076617220636c65616e73203d20762e636c65616e733b0a2020202020202020766172206772616465203d20762e67726164653b0a20202020202020200a20202020202020207661722073756d6d617279203d2022414c45525420504f4c4943593a5c5c6e22202b0a20202020202020202020202022566f6c74616765204472696674203e2022202b20766f6c74202b20222520e2869220414c41524d5c5c6e22202b0a202020202020202020202020224d552052617465203e2022202b206d75202b2022206d6c2f6820e28692205741524e494e475c5c6e22202b0a20202020202020202020202022436c65616e73203e2022202b20636c65616e73202b20222f3130306820e28692205245564945575c5c6e22202b0a202020202020202020202020224772616465203c2022202b206772616465202b202220e286922053544f50223b0a2020202020202020202020200a202020202020202072657475726e207b2073756d6d6172793a2073756d6d617279207d3b0a202020207d2c0a0a202020202f2f203d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a202020202f2f20504841534520383a205748495445202620555620494e4b20544f4f4c53202832204974656d73290a202020202f2f203d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a0a202020202f2f20312e205768697465204f706163697479202620436f76657261676520457374696d61746f720a202020202263696a2d77686974652d75762d696e6b2d7573652d63617365732d6f7061636974792d31223a2066756e6374696f6e28696e7075747329207b0a202020202020202076617220737562203d20696e707574732e737562737472617465207c7c2022426c61636b20504554223b0a20202020202020207661722064796e6573203d207061727365466c6f617428696e707574732e707265747265617429207c7c2033303b0a20202020202020207661722066696c6d203d207061727365466c6f617428696e707574732e66696c6d29207c7c20353b0a2020202020202020766172207069676d656e74203d20696e707574732e7069676d656e74207c7c202254694f32207374616e64617264223b0a2020202020202020766172207370656564203d207061727365466c6f617428696e707574732e737065656429207c7c203130303b0a20202020202020200a20202020202020202f2f204261736520726571756972656d656e74206261736564206f6e2073756273747261746520636f6e7472617374206368616c6c656e67650a202020202020202076617220726571203d20312e303b0a20202020202020206966287375622e696e636c756465732822426c61636b2229207c7c207375622e696e636c756465732822416d62657222292920726571203d20322e303b0a20202020202020206966287375622e696e636c7564657328224b7261667422292920726571203d20312e353b202f2f204162736f7262656e740a20202020202020200a20202020202020202f2f205069676d656e7420626f6e75730a20202020202020207661722070456666203d20312e303b0a20202020202020206966287069676d656e742e696e636c756465732822686f6c6c6f772229292070456666203d20312e333b202f2f204265747465722073636174746572696e670a20202020202020200a20202020202020202f2f2046696c6d20696d706163742028746869636b20697320676f6f64290a20202020202020207661722066456666203d2066696c6d202f20352e303b202f2f204e6f726d20746f2035756d0a20202020202020200a20202020202020202f2f2053706565642070656e616c74792028696e6b207370726561642f7468696e6e696e67290a2020202020202020766172207350656e203d20312e303b0a20202020202020206966287370656564203e2036303029207350656e203d20302e383b0a20202020202020200a20202020202020202f2f20546f74616c2022436f76657261676520506f77657222203d202846696c6d202a205069676d656e74202a20537065656450656e616c7479290a202020202020202076617220706f776572203d2066456666202a2070456666202a207350656e3b0a20202020202020200a20202020202020202f2f20506173736573206e6565646564203d20526571756972656d656e74202f20506f7765720a202020202020202076617220706173736573203d204d6174682e6365696c28726571202f20706f776572293b0a2020202020202020696628706173736573203c20312920706173736573203d20313b0a2020202020202020696628706173736573203e20352920706173736573203d20353b202f2f204361700a20202020202020200a2020202020202020766172206e6f7465203d20225374616e646172642073657475702e223b0a202020202020202069662864796e6573203c20333829206e6f7465203d20225269736b3a204c6f77207375726661636520656e6572677920283c3338292e204164686573696f6e20636865636b206d616e6461746f72792e223b0a2020202020202020656c736520696628706173736573203e203329206e6f7465203d202248696768206f706163697479206e6565642e20436f6e73696465722055562d63757261626c65206f7220736c6f776572206c696e652e223b0a2020202020202020656c7365206966287375622e696e636c7564657328224b7261667422292026262066696c6d203c203829206e6f7465203d2022506f726f757320737562737472617465206d6179206162736f726220666c7569643b20696e63726561736520746869636b6e6573732e223b0a20202020202020200a202020202020202072657475726e207b0a2020202020202020202020207061737365733a20706173736573202b2022205c7530306437222c0a2020202020202020202020206e6f74653a206e6f74650a20202020202020207d3b0a202020207d2c0a0a202020202f2f20322e20555620526561646162696c69747920436865636b65720a202020202263696a2d77686974652d75762d696e6b2d7573652d63617365732d7576636865636b2d32223a2066756e6374696f6e28696e7075747329207b0a2020202020202020766172206c616d70203d20696e707574732e6c616d70207c7c2022333635223b0a202020202020202076617220696e6b203d20696e707574732e696e6b207c7c2022496e76697369626c65223b0a202020202020202076617220737562203d20696e707574732e737562737472617465207c7c20224461726b223b0a20202020202020207661722063616d203d20696e707574732e63616d657261207c7c20224e6f6e65223b0a20202020202020200a20202020202020207661722073636f7265203d20353b202f2f205374617274206d69640a20202020202020200a20202020202020202f2f204c616d70206d61746368202833363520697320757375616c6c7920696465616c20666f7220726172652d65617274682f6f7267616e696320696e76697369626c65290a20202020202020206966286c616d70203d3d3d202233363522292073636f7265202b3d20323b0a20202020202020206966286c616d70203d3d3d20223339352220262620696e6b2e696e636c756465732822496e76697369626c652229292073636f7265202d3d20313b202f2f20426c65656420696e746f2076697369626c652076696f6c65740a20202020202020200a20202020202020202f2f20436f6e74726173740a2020202020202020696628737562203d3d3d20224461726b2229207b0a2020202020202020202020202f2f204461726b206162736f7262732055563f204f72207265666c656374733f20757375616c6c79206461726b206561747320666c756f72657363656e636520756e6c657373206f70617175650a2020202020202020202020202f2f2041637475616c6c792c205556206f6e206461726b20697320757375616c6c7920474f4f4420636f6e74726173742069662074686520696e6b20676c6f77732062726967687420677265656e2f7265642f626c75652e0a20202020202020202020202073636f7265202b3d20313b200a20202020202020207d20656c736520696628737562203d3d3d20224c696768742220262620696e6b2e696e636c756465732822496e76697369626c65222929207b0a2020202020202020202020202f2f20496e76697369626c65206f6e2077686974652070617065722075736573204f4241733f20436f6e666c6963742e0a20202020202020202020202073636f7265202d3d20323b200a20202020202020207d0a20202020202020200a20202020202020202f2f2043616d6572610a202020202020202069662863616d2e696e636c7564657328224e6172726f772229292073636f7265202b3d20333b202f2f204375747320616d6269656e740a202020202020202069662863616d203d3d3d20224e6f6e6522292073636f7265202d3d20313b202f2f2048756d616e20657965206f6e6c7920697320747269636b7920666f7220686967682073706565640a20202020202020200a20202020202020202f2f204361700a202020202020202069662873636f7265203e203130292073636f7265203d2031303b0a202020202020202069662873636f7265203c2031292073636f7265203d20313b0a20202020202020200a202020202020202076617220746970203d2022436865636b2066696c74657220422f572e223b0a202020202020202069662873636f7265203c20352920746970203d2022506f6f72207369676e616c2e20547279203336356e6d206c616d70202b2042616e642d706173732066696c7465722e223b0a2020202020202020656c736520696628737562203d3d3d20224c69676874222920746970203d2022576174636820666f72204f70746963616c20427269676874656e65727320284f4241732920696e207061706572206261636b67726f756e642e223b0a2020202020202020656c736520746970203d2022476f6f6420726f62757374207369676e616c2065787065637465642e223b0a20202020202020200a202020202020202072657475726e207b0a202020202020202020202020726174696e673a2073636f7265202b20222f3130222c0a2020202020202020202020207469703a207469700a20202020202020207d3b0a202020207d2c0a0a202020202f2f203d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a202020202f2f20504841534520393a20574554204144484553494f4e20544f4f4c53202837204974656d73290a202020202f2f203d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0a0a202020202f2f20312e204f57524b204578706c61696e65720a202020202263696a2d6164686573696f6e2d7765742d7065742d676c6173732d6f77726b2d31223a2066756e6374696f6e28696e7075747329207b0a202020202020202076617220737562203d20696e707574732e737562737472617465207c7c20225045542028756e7472656174656429223b0a20202020202020207661722067616d6d61203d207061727365466c6f617428696e707574732e67616d6d615f6c29207c7c2034303b0a2020202020202020766172207468657461203d207061727365466c6f617428696e707574732e746865746129207c7c2033353b0a20202020202020200a20202020202020202f2f205741203d2067616d6d61202a202831202b20636f73287468657461292920726f7567686c790a2020202020202020766172207468657461526164203d207468657461202a204d6174682e5049202f203138303b0a2020202020202020766172207761203d2067616d6d61202a202831202b204d6174682e636f7328746865746152616429293b0a20202020202020200a202020202020202076617220746970203d2022476f6f64223b0a20202020202020206966287761203c2034352920746970203d20225269736b3a204c6f77206164686573696f6e223b0a20202020202020206966287375622e696e636c756465732822756e747265617465642229202626207468657461203e2036302920746970203d2022416374697661746520666972737421223b0a20202020202020206966287375622e696e636c756465732822476c6173732229202626207468657461203c2031352920746970203d2022457863656c6c656e742077657474696e67223b0a20202020202020200a202020202020202072657475726e207b0a20202020202020202020202077613a2077612e746f46697865642831292c0a2020202020202020202020207469703a207469700a20202020202020207d3b0a202020207d2c0a0a202020202f2f20322e2044796e652057696e646f772043616c63756c61746f720a202020202263696a2d6164686573696f6e2d64796e652d77696e646f772d33223a2066756e6374696f6e28696e7075747329207b0a20202020202020207661722064796e65203d207061727365466c6f617428696e707574732e7065745f64796e6529207c7c2035343b0a2020202020202020766172206d617267696e203d207061727365466c6f617428696e707574732e6d617267696e29207c7c20383b0a20202020202020200a20202020202020207661722068696768203d2064796e65202d206d617267696e3b0a2020202020202020766172206c6f77203d2064796e65202d20286d617267696e202b2034293b200a20202020202020200a2020202020202020696620286c6f77203c20323029206c6f77203d2032303b0a0a202020202020202072657475726e207b0a2020202020202020202020206c6f773a206c6f772e746f46697865642831292c0a202020202020202020202020686967683a20686967682e746f46697865642831292c0a2020202020202020202020206e6f74653a202868696768203c20333029203f20225665727920646966666963756c7420696e6b2074617267657422203a20225374616e646172642067656e657269632f4d454b2072616e6765220a20202020202020207d3b0a202020207d2c0a0a202020202f2f20332e2056656e74696e672f53696c616e6520436865636b65720a202020202263696a2d6164686573696f6e2d7765742d7065742d676c6173732d76656e74696e672d32223a2066756e6374696f6e28696e7075747329207b0a202020202020202076617220737562203d20696e707574732e737562737472617465207c7c2022476c6173732028636c65616e29223b0a202020202020202076617220696e6b203d207061727365466c6f617428696e707574732e696e6b5f74656e73696f6e29207c7c2034323b0a20202020202020207661722073696c616e65203d20696e707574732e73696c616e65207c7c20224e6f223b0a20202020202020200a20202020202020207661722073756244796e65203d203235303b202f2f20476c6173732064656661756c740a20202020202020206966287375622e696e636c756465732822756e747265617465642229292073756244796e65203d2034343b0a20202020202020206966287375622e696e636c756465732822636f726f6e612229292073756244796e65203d2035343b0a20202020202020200a20202020202020207661722064696666203d2073756244796e65202d20696e6b3b0a202020202020202076617220726573756c74203d202250617373223b0a202020202020202076617220616476696365203d202250726f63656564223b0a20202020202020200a20202020202020206966202864696666203c203829207b0a202020202020202020202020726573756c74203d20224661696c202857657474696e6729223b0a202020202020202020202020616476696365203d2022426f6f73742064796e65206f72206c6f77657220696e6b2074656e73696f6e223b0a20202020202020207d0a20202020202020200a2020202020202020696620287375622e696e636c756465732822476c617373222929207b0a2020202020202020202020206966202873696c616e65203d3d3d20224e6f2229207b0a20202020202020202020202020202020726573756c74203d20225269736b7920284c6f6e67205465726d29223b0a20202020202020202020202020202020616476696365203d20224164642073696c616e6520666f722068756d696469747920726573697374616e6365223b0a2020202020202020202020207d20656c7365206966202873696c616e652e696e636c756465732822756e6b6e6f776e222929207b0a20202020202020202020202020202020726573756c74203d20225665726966792050726f63657373223b0a20202020202020202020202020202020616476696365203d2022436865636b2070482026206477656c6c223b0a2020202020202020202020207d0a20202020202020207d0a20202020202020200a202020202020202072657475726e207b0a202020202020202020202020726573756c743a20726573756c742c0a2020202020202020202020206164766963653a206164766963650a20202020202020207d3b0a202020207d2c0a0a202020202f2f20342e20416972204b6e69666520457374696d61746f720a202020202263696a2d6164686573696f6e2d6169726b6e6966652d34223a2066756e6374696f6e28696e7075747329207b0a20202020202020207661722064697374203d207061727365466c6f617428696e707574732e64697374616e636529207c7c203138303b0a2020202020202020766172207370656564203d207061727365466c6f617428696e707574732e737065656429207c7c2033363b0a20202020202020207661722066696c6d203d207061727365466c6f617428696e707574732e696e697466696c6d29207c7c2036303b0a20202020202020200a20202020202020202f2f207672657120617070726f782035202b20302e322a66696c6d202b20302e30352a7370656564202b20302e30322a646973740a20202020202020207661722076726571203d2035202b2028302e32202a2066696c6d29202b2028302e3035202a20737065656429202b2028302e3032202a2064697374293b0a20202020202020206966202876726571203e20313230292076726571203d203132303b202f2f204361700a20202020202020200a202020202020202072657475726e207b0a202020202020202020202020767265713a20767265712e746f4669786564283129202b2022206d2f73222c0a2020202020202020202020206e6f74653a202876726571203e20383029203f2022486967682076656c6f63697479206e65656465642028636f6d70726573736f723f2922203a2022426c6f7765722073756666696369656e74220a20202020202020207d3b0a202020207d2c0a0a202020202f2f20352e2054686574612054617267657420506c616e6e65720a202020202263696a2d6164686573696f6e2d74686574612d7461726765742d35223a2066756e6374696f6e28696e7075747329207b0a202020202020202076617220737562203d20696e707574732e737562737472617465207c7c202250455420287472656174656429223b0a20202020202020207661722064757479203d20696e707574732e64757479207c7c202244727920616d6269656e74223b0a20202020202020200a20202020202020207661722062617365203d20287375622e696e636c756465732822504554222929203f203335203a2031353b0a20202020202020200a202020202020202069662028647574792e696e636c756465732822436f6e64656e736174696f6e2229292062617365202d3d20287375622e696e636c7564657328225045542229203f2035203a2033293b0a202020202020202069662028647574792e696e636c75646573282252696e73652229207c7c20647574792e696e636c756465732822436f6c642229292062617365202d3d20287375622e696e636c7564657328225045542229203f2038203a2035293b0a20202020202020200a20202020202020206966202862617365203c2035292062617365203d20353b202f2f204d696e20706879736963616c206c696d697420757375616c6c790a20202020202020200a202020202020202072657475726e207b0a20202020202020202020202074686574615f7461726765743a20223c2022202b2062617365202b20225c7530306230222c0a2020202020202020202020206f70733a202862617365203c20313529203f2022416767726573736976652061637469766174696f6e2f7072696d696e6720726571756972656422203a20225374616e646172642074726561746d656e74204f4b220a20202020202020207d3b0a202020207d2c0a0a202020202f2f20362e20444f45204275696c6465720a202020202263696a2d6164686573696f6e2d646f652d36223a2066756e6374696f6e28696e7075747329207b0a202020202020202076617220666163746f7273203d20696e707574732e666163746f7273207c7c205b5d3b0a20202020202020202f2f20666163746f7273206973206172726179206966206d756c74692d73656c6563742c20617373756d696e672068657265207374616e646172642073696e676c652073656c65637420666f72204d5650206f7220636f6d6d6120737472696e673f0a20202020202020202f2f20576169742c206d756c7469706c652073656c6563742068616e646c696e6720696e207631333f200a20202020202020202f2f204d7920696e707574732070617273696e67206c6f6769633a2069662053454c454354206d756c7469706c653f204e6f2c207374616e646172642073656c6563742072657475726e732076616c75652e200a20202020202020202f2f204966207468652075736572206d65616e742022636f756e74206f6620666163746f7273222c2074686520696e70757420616c6c6f77732022466163746f7273222073656c656374696f6e2e200a20202020202020202f2f204c6574277320617373756d6520696e707574206973206a757374206f6e6520666163746f722073656c656374656420746f204164642c206275742074686520746f6f6c20696d706c69656420224275696c646572222e0a20202020202020202f2f2041637475616c6c79207468652048544d4c20696e707574206973206a75737420612073696e676c652053656c6563742e204c657427732061637420617320696620697420657374696d617465732072756e7320666f722061207374616e64617264207365742e0a20202020202020200a20202020202020202f2f2053696d706c6966696564204c6f6769633a204a757374203120666163746f722073656c65637465643f204e6f2c206c657427732070726574656e6420696e707574732e666163746f7273206973206120737472696e672e0a2020202020202020766172206b203d20333b202f2f2044656661756c74203320666163746f727320666f72207374616e6461726420444f450a202020202020202069662028666163746f72732e696e636c756465732822504554222929206b2b2b3b0a202020202020202069662028666163746f72732e696e636c756465732822496e6b222929206b2b2b3b0a20202020202020200a202020202020202076617220726570203d207061727365466c6f617428696e707574732e72657029207c7c20333b0a20202020202020200a20202020202020202f2f2046616b6520697420666f72207468652073696e676c652073656c656374206c696d69746174696f6e3a0a20202020202020202f2f20496620746865792073656c65637420225045542044796e65222c20776520617373756d652074686579206172652074657374696e672074686174202b2032206f74686572732e0a20202020202020202f2f2041637475616c6c792c206c65742773206a757374206d616b652069742073696d706c652e0a20202020202020207661722072756e73203d204d6174682e706f7728322c203329202a207265703b202f2f20325e33202a207265700a20202020202020200a202020202020202072657475726e207b0a20202020202020202020202072756e733a2072756e732c0a2020202020202020202020207469703a202246756c6c20466163746f7269616c2028322d6c6576656c2c203320666163746f727329220a20202020202020207d3b0a202020207d2c0a0a202020202f2f20372e204f70732052656164696e65737320436865636b0a202020202263696a2d6164686573696f6e2d6f70732d636865636b2d37223a2066756e6374696f6e28696e7075747329207b0a202020202020202076617220706574203d207061727365466c6f617428696e707574732e7065745f64796e6529207c7c2035323b0a202020202020202076617220696e6b203d207061727365466c6f617428696e707574732e696e6b29207c7c2034343b0a2020202020202020766172207072696d6572203d20696e707574732e7072696d6572207c7c20224e2f41223b0a202020202020202076617220616972203d207061727365466c6f617428696e707574732e61697229207c7c2038303b0a20202020202020200a20202020202020207661722073636f7265203d203130303b0a202020202020202076617220616374696f6e73203d205b5d3b0a20202020202020200a20202020202020202f2f20504554206c6f6769630a2020202020202020766172206d617267696e203d20706574202d20696e6b3b0a2020202020202020696620286d617267696e203c203829207b0a2020202020202020202020207661722070656e203d202838202d206d617267696e29202a20353b0a20202020202020202020202073636f7265202d3d2070656e3b0a202020202020202020202020616374696f6e732e7075736828225261697365205045542064796e6522293b0a20202020202020207d0a20202020202020200a20202020202020202f2f205072696d6572206c6f6769630a2020202020202020696620287072696d65722e696e636c7564657328226c6174652229207c7c207072696d6572203d3d3d20224e2f412229207b0a202020202020202020202020202f2f206d696c642070656e616c7479206966204e2f4120696d706c696573206e6f74206e65656465643f20617373756d696e6720636f6e746578740a20202020202020202020202020696620287072696d65722e696e636c7564657328226c617465222929207b0a202020202020202020202020202020202073636f7265202d3d2032303b0a2020202020202020202020202020202020616374696f6e732e707573682822466978207072696d65722074696d696e6722293b0a202020202020202020202020207d0a20202020202020207d0a20202020202020200a20202020202020202f2f20416972206c6f6769630a202020202020202069662028616972203c20363029207b0a20202020202020202020202073636f7265202d3d2031303b0a202020202020202020202020616374696f6e732e707573682822426f6f7374206169722076656c6f6369747922293b0a20202020202020207d0a20202020202020200a20202020202020206966202873636f7265203c2030292073636f7265203d20303b0a20202020202020200a202020202020202072657475726e207b0a20202020202020202020202073636f72653a2073636f7265202b20222f313030222c0a202020202020202020202020616374696f6e3a2028616374696f6e732e6c656e677468203e203029203f20616374696f6e735b305d203a2022526561647920746f207072696e74220a20202020202020207d3b0a202020207d2c0a0a202020202f2f202d2d2d2050484153452031303a204d414b452d555020434f4e53554d5054494f4e20544f4f4c53202831204974656d29202d2d2d0a202020202f2f20312e20416374697665204d616b652d557020436f6e73756d7074696f6e0a20202020226d616b6575702d636f6e73756d7074696f6e2d63616c63756c61746f722d6163746976652d31223a2066756e6374696f6e28696e7075747329207b0a202020202020202076617220645f756d203d207061727365466c6f617428696e707574732e645f756d29207c7c2036303b0a202020202020202076617220705f626172203d207061727365466c6f617428696e707574732e64656c7461505f62617229207c7c20322e303b0a20202020202020207661722072686f203d207061727365466c6f617428696e707574732e72686f29207c7c203738393b0a2020202020202020766172206364203d207061727365466c6f617428696e707574732e436429207c7c20302e39373b0a20202020202020207661722064757479203d207061727365466c6f617428696e707574732e6475747929207c7c2031353b0a0a20202020202020202f2f20506879736963730a202020202020202076617220645f6d203d20645f756d202a2031652d363b0a2020202020202020766172207261646975735f6d203d20645f6d202f20322e303b0a202020202020202076617220617265615f6d32203d204d6174682e5049202a204d6174682e706f77287261646975735f6d2c2032293b0a20202020202020200a202020202020202076617220705f7061203d20705f626172202a203165353b0a20202020202020200a20202020202020202f2f2051203d204364202a2041202a20737172742832202a206450202f2072686f290a202020202020202076617220715f696e73745f6d3373203d206364202a20617265615f6d32202a204d6174682e73717274282832202a20705f706129202f2072686f293b0a20202020202020200a20202020202020202f2f2041637469766520510a202020202020202076617220715f6163746976655f6d3373203d20715f696e73745f6d3373202a202864757479202f203130302e30293b0a20202020202020200a20202020202020202f2f20436f6e7665727420746f206d4c2f683a206d332f73202a203336303020732f68202a20316536206d6c2f6d330a202020202020202076617220715f696e73745f6d6c68203d20715f696e73745f6d3373202a2033363030202a203165363b0a202020202020202076617220715f6163746976655f6d6c68203d20715f6163746976655f6d3373202a2033363030202a203165363b0a0a202020202020202072657475726e207b0a202020202020202020202020715f696e73745f6d6c683a20715f696e73745f6d6c682e746f4669786564283129202b2022206d6c2f68222c0a202020202020202020202020715f6163746976655f6d6c683a20715f6163746976655f6d6c682e746f4669786564283129202b2022206d6c2f68222c0a2020202020202020202020206e6f74653a202241637469766520636f6e73756d7074696f6e204022202b2064757479202b2022252064757479206379636c65220a20202020202020207d3b0a202020207d0a0a7d293b0a0a2f2f202d2d2d2076313320456e67696e652028526561637469766529202d2d2d0a2f2f204c697374656e20666f7220496e707574204368616e67657320284175746f2d43616c63290a2f2f204c697374656e20666f7220496e707574204368616e6765732028546578742f4e756d626572290a646f63756d656e742e6164644576656e744c697374656e65722827696e707574272c2066756e6374696f6e286529207b0a2020202076617220636f6e7461696e6572203d20652e7461726765742e636c6f7365737428275b646174612d6974622d63616c63756c61746f725d27293b0a2020202069662028636f6e7461696e657229207b0a202020202020202077696e646f772e6f7a4578656375746543616c6328636f6e7461696e6572293b0a202020207d0a7d293b0a0a2f2f204c697374656e20666f72204368616e6765204576656e7473202853656c6563742f526164696f2f436865636b626f7829202d20435249544943414c204649580a646f63756d656e742e6164644576656e744c697374656e657228276368616e6765272c2066756e6374696f6e286529207b0a2020202076617220636f6e7461696e6572203d20652e7461726765742e636c6f7365737428275b646174612d6974622d63616c63756c61746f725d27293b0a2020202069662028636f6e7461696e657229207b0a202020202020202077696e646f772e6f7a4578656375746543616c6328636f6e7461696e6572293b0a202020207d0a7d293b0a0a2f2f20496e697469616c20626f6f740a7661722063616c6373203d20646f63756d656e742e717565727953656c6563746f72416c6c28275b646174612d6974622d63616c63756c61746f725d27293b0a63616c63732e666f72456163682866756e6374696f6e286329207b2077696e646f772e6f7a4578656375746543616c632863293b207d293b0a0a636f6e736f6c652e6c6f6728274f5a3a2076352e3120526561637469766520456e67696e652046756c6c79204c6f6164656427293b0a"><script>!function(){if(!window.ozExecuteCalc)window.ozExecuteCalc=function(){console.warn("OZ: Loading...")};function l(){setTimeout(function(){var e=document.getElementById("oz-safe-code");if(e){var v=e.value;if(v&&v.length%2===0){var s="";for(var i=0;i<v.length;i+=2)s+=String.fromCharCode(parseInt(v.substr(i,2),16));window.eval(s)}}}, 500)}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",l);else l();}();</script><style>.oz-calculator-app { margin:0; padding:0; font-size:0; line-height:0; }.itb-outputs { display: block; margin-top: 20px; padding: 15px; background: #f0fdf4; border: 1px solid #16a34a; border-radius: 6px; font-size: 16px; line-height: 1.5; }.itb-output-group { margin-bottom: 8px; display: flex; justify-content: space-between; border-bottom: 1px dashed #bbf7d0; padding-bottom: 4px; }.itb-output-group:last-child { border-bottom: none; }</style></div>

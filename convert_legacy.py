@@ -5,8 +5,11 @@ import json
 # This script finds legacy JSON tool definitions in errorpost.html
 # and replaces them with Level 5 HTML Calculator structures.
 
+def slugify(text):
+    return re.sub(r'[^a-z0-9]+', '-', text.lower()).strip('-')
+
 def generate_html(tool_id, data):
-    title = data.get('title_en', tool_id)
+    title = data.get('title_en', data.get('name', tool_id))
     theme_color = "#3b82f6" # default blue
     bg_color = "#eff6ff"
     
@@ -22,10 +25,10 @@ def generate_html(tool_id, data):
     <div class="itb-inputs">"""
 
     for inp in data.get('inputs', []):
-        label = inp.get('label', inp['name'])
-        name = inp['name']
+        name = inp.get('name', inp.get('id', 'unknown'))
+        label = inp.get('label', name)
+        
         val = ""
-        type_ = "text"
         
         # Build Input Field
         field_html = ""
@@ -36,7 +39,6 @@ def generate_html(tool_id, data):
             field_html = f'<select data-var="{name}">{opts}</select>'
         else:
             if inp.get('type') == 'number':
-                type_ = "number"
                 val = str(inp.get('min', 0))
                 step = str(inp.get('step', 1))
                 field_html = f'<input type="number" data-var="{name}" value="{val}" step="{step}">'
@@ -57,8 +59,8 @@ def generate_html(tool_id, data):
     <div class="itb-outputs" data-itb-results aria-live="polite">"""
 
     for out in data.get('outputs', []):
-        label = out.get('label', out['name'])
-        key = out['name']
+        key = out.get('name', out.get('id', 'unknown'))
+        label = out.get('label', key)
         html += f"""
         <div class="itb-output-group">
             <label>{label}:</label>
@@ -71,18 +73,21 @@ def generate_html(tool_id, data):
     return html
 
 # Read file
-with open('found_tools_phase4.json', 'r', encoding='utf-8') as f:
+with open('found_tools_phase9.json', 'r', encoding='utf-8') as f:
     tools_data = json.load(f)
 
-tools_map = {t['id']: t for t in tools_data}
+tools_map = {}
+for t in tools_data:
+    if 'id' not in t:
+        t['id'] = slugify(t.get('name', 'tool'))
+    tools_map[t['id']] = t
 
 with open('errorpost.html', 'r', encoding='utf-8') as f:
     content = f.read()
 
 # Replace <pre> blocks
-# Regex to find <code class="itb-tool">{...}</code>
-# We iterate through findall to handle replacements carefully
-matches = re.findall(r'(<pre><code class="itb-tool">\s*({.*?})\s*</code></pre>)', content, re.DOTALL)
+# Regex to find <pre ...><code class="itb-tool">{...}</code></pre>
+matches = re.findall(r'(<pre[^>]*><code class="itb-tool">\s*({.*?})\s*</code></pre>)', content, re.DOTALL)
 
 print(f"Found {len(matches)} blocks to replace.")
 
@@ -92,12 +97,15 @@ for full_match, json_str in matches:
     try:
         data = json.loads(json_str)
         tid = data.get('id')
-        if tid and tid in tools_map:
+        if not tid:
+            tid = slugify(data.get('name', 'tool'))
+            
+        if tid in tools_map:
             print(f"Converting {tid}...")
             new_html = generate_html(tid, data)
-            # Replace logic
-            # Using simple replacement might be risky if duplicates exist, but these look unique
             new_content = new_content.replace(full_match, new_html)
+        else:
+            print(f"Warning: Tool ID {tid} not found in map.")
     except Exception as e:
         print(f"Error parsing match: {e}")
 
